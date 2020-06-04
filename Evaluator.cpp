@@ -2,6 +2,7 @@
 #include <iostream>
 #include "StringUtils.h"
 #include <cassert>
+#include <cmath>
 
 Evaluator::Evaluator() {
 }
@@ -37,10 +38,19 @@ double Evaluator::eval(SyntaxTreeNode *root) {
         return ret;
     }
 
-    // TODO if token is a conditional, call conditionalHandler.
+    // If token is a conditional, if bool test in results[0] is true, return results[1], else return results[2].
+    // TODO: Do not evaluate child before bool test
+    if (root->keywordType == KEYWORD_CONDITIONAL) {
+        if (!isEqual(results[0], 0)) {
+            return results[1];
+        } else if (results.size() > 2) {
+            return results[2];
+        }
+    }
 
     // TODO if token is a UDF, its children are its arguments. Map to its definition.
     
+    // In case of something like ((2)), this happens.
     if (results.size() > 0) {
         return results[0];
     } else {
@@ -79,4 +89,9 @@ double Evaluator::mapOp(const std::string &op, std::vector<double> vOperands) {
         ret = (double)(vOperands.at(0) && vOperands.at(1));
     }
     return ret;
+}
+
+#define EPSILON 0.001
+bool Evaluator::isEqual(double x, double y) {
+    return (abs(x - y) < EPSILON);
 }

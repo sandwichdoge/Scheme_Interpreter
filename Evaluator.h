@@ -8,6 +8,8 @@ public:
     ~Evaluator();
     double mapOp(const std::string &op, std::vector<double> vOperands);
     double eval(SyntaxTreeNode *root);
+private:
+    bool isEqual(double x, double y);
 };
 
 #endif

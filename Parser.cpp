@@ -15,10 +15,10 @@ int Parser::parse(SyntaxTreeNode *root) {
 
     if (tok == "(") {
         SyntaxTreeNode *node = root->createChildNode();
-        std::cout << "[";
+        //std::cout << "[";
         parse(node);
     } else if (tok == ")") {
-        std::cout << "]";
+        //std::cout << "]";
         parse(root->parent);
     } else {
         if (root->keywordType != KEYWORD_UNKNOWN) { // Parent has been visited before.
@@ -34,9 +34,9 @@ int Parser::parse(SyntaxTreeNode *root) {
             parse(node);
         }*/
 
-        std::cout << tok;
+        //std::cout << tok;
         //std::cout << "[" << root->keywordType << "]";
-        std::cout << ",";
+        //std::cout << ",";
 
         parse(root);
     }
