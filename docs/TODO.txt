@@ -1,0 +1,9 @@
+https://en.wikibooks.org/wiki/Scheme_Programming
+
+Separate evalLambda() to eval function definitions -> add to lookup table of lambdas.
+
+Use post-order traversal on normal lambda arguments -> eval() runs into lambda -> 
+check lambda name and arg count in lookup table -> 
+- dont mind argument names, only care about whether they're 1st, 2nd, 3rd, etc arguments.
+- construct lambda tree at Evaluator?
+- or expand lambda function at Parser, dont change Evaluator?
