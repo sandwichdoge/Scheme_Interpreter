@@ -15,10 +15,24 @@ double Evaluator::eval(SyntaxTreeNode *root) {
     std::cout << "eval:" << root->token << "\n";
     std::cout << "Child nodes count:" << root->childNodes.size() << "\n";
     std::vector<double> results;
-    for (std::size_t i = 0; i < root->childNodes.size(); ++i) {
-        double ret = eval(root->childNodes[i]);
+    
+    // Evaluate IF test before clauses.
+    if (root->keywordType == KEYWORD_CONDITIONAL) {
+        double test = eval(root->childNodes[0]);
+        double ret = 0;
+        if (!isEqual(test, 0)) {
+            ret = eval(root->childNodes[1]);
+        } else if (root->childNodes.size() > 2) {
+            ret = eval(root->childNodes[2]);
+        }
         results.push_back(ret);
+    } else { // For non-if clauses, evaluate everything first.
+        for (std::size_t i = 0; i < root->childNodes.size(); ++i) {
+            double ret = eval(root->childNodes[i]);
+            results.push_back(ret);
+        }
     }
+    
 
     // If keyword is a constant, convert it to double and return it.
     if (root->keywordType == KEYWORD_CONSTANT) {
@@ -36,16 +50,6 @@ double Evaluator::eval(SyntaxTreeNode *root) {
         double ret = mapOp(root->token, results);
         std::cout << root->token << " returns [" << ret << "]\n";
         return ret;
-    }
-
-    // If token is a conditional, if bool test in results[0] is true, return results[1], else return results[2].
-    // TODO: Do not evaluate child before bool test
-    if (root->keywordType == KEYWORD_CONDITIONAL) {
-        if (!isEqual(results[0], 0)) {
-            return results[1];
-        } else if (results.size() > 2) {
-            return results[2];
-        }
     }
 
     // TODO if token is a UDF, its children are its arguments. Map to its definition.
