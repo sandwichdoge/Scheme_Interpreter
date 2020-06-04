@@ -54,7 +54,7 @@ double Evaluator::eval(SyntaxTreeNode *root) {
 
     // TODO if token is a UDF, its children are its arguments. Map to its definition.
     
-    // In case of something like ((2)), this happens.
+    // In case of something like ((2)) or ((1) (2)), this happens.
     if (results.size() > 0) {
         return results[0];
     } else {

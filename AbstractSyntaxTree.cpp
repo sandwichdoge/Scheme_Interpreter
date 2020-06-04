@@ -32,6 +32,8 @@ void SyntaxTreeNode::identifyKeyword() {
         this->keywordType = KEYWORD_CONSTANT;
     } else if (tok == "if") {
         this->keywordType = KEYWORD_CONDITIONAL;
+    } else if (tok == "lambda") { // Function definition
+        this->keywordType = KEYWORD_UDF_DEF;
     } else {
         this->keywordType = KEYWORD_UDF;
     } 
