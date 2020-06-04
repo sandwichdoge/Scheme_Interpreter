@@ -57,9 +57,14 @@ double Interpreter::eval() {
 }
 
 int Interpreter::run(double& result) {
+    // Check basic syntax.
     if (checkSyntax() < 0) return -1;
+    // Split source into word tokens.
     if (lex() < 0) return -2;
+    // Parse tokens into AST.
     if (parse() < 0) return -3;
+    // Evaluate AST.
     result = eval();
+    
     return 0;
 }

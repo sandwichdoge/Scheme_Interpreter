@@ -17,14 +17,10 @@ int main(int argc, char *argv[]) {
         std::cout << "Failure: Could not open source file.\n";
         return -2;
     }
-    if (pInterpreter->checkSyntax() < 0) {
-        std::cout << "Failure: Invalid syntax.\n";
-        return -3;
-    }
-
     double final = 0;
     pInterpreter->run(final);
     std::cout << final << "\n";
+
     delete pInterpreter;
     return 0;
 }
