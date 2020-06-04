@@ -87,6 +87,9 @@ double Evaluator::mapOp(const std::string &op, std::vector<double> vOperands) {
     } else if (op == "&") {
         assert(vOperands.size() == 2 && "Error. Comparison only takes 2 operands.");
         ret = (double)(vOperands.at(0) && vOperands.at(1));
+    } else if (op == "|") {
+        assert(vOperands.size() == 2 && "Error. Comparison only takes 2 operands.");
+        ret = (double)(vOperands.at(0) || vOperands.at(1));
     }
     return ret;
 }
