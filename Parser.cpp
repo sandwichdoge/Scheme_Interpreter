@@ -28,11 +28,7 @@ int Parser::parse(SyntaxTreeNode *root) {
         }
         root->token = tok;
         root->identifyKeyword();
-        /* TODO no parentheses needed for constants
-        if (root->keywordType == KEYWORD_OPERATOR) {
-            SyntaxTreeNode *node = createSyntaxTreeNode(root);
-            parse(node);
-        }*/
+        /* TODO no parentheses needed for constants*/
 
         //std::cout << tok;
         //std::cout << "[" << root->keywordType << "]";

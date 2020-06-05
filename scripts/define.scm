@@ -1,4 +1,7 @@
-(sum (1) (2)) 
-(lambda (sum) ((a) (b))
-    (+ (b) (a))
+(define (x) (4))
+(define (y) (5))
+(if 
+    (< (x) (y))
+    (555)
+    (666)
 )
