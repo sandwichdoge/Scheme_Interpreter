@@ -47,9 +47,11 @@ void SyntaxTreeNode::identifyKeyword() {
 
 void SyntaxTreeNode::propagateSymbol(std::pair<std::string, SyntaxTreeNode::Symbol> symbol) {
     for (std::size_t i = 0; i < childNodes.size(); ++i) {
-        std::cout << "Adding symbol to node " << childNodes[i]->nodeid << "\n";
-        std::cout << "Type " << symbol.second.type << "\n";
         childNodes[i]->propagateSymbol(symbol);
-        childNodes[i]->symbolTable.insert(symbol);
+        if (childNodes[i]->symbolTable.find(symbol.first) == childNodes[i]->symbolTable.end()) {
+            childNodes[i]->symbolTable.insert(symbol);
+        } else {
+            childNodes[i]->symbolTable[symbol.first] = symbol.second;
+        }
     }
 }
