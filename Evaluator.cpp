@@ -14,7 +14,7 @@ Evaluator::~Evaluator(){
 double Evaluator::eval(SyntaxTreeNode *root) {
     // Traverse and eval all children.
     db("eval:" << root->token);
-    std::cout << "Child nodes count:" << root->childNodes.size() << "\n";
+    db("Child nodes count:" << root->childNodes.size());
     std::vector<double> results;
     
     // Evaluate IF test before clauses.
@@ -38,7 +38,7 @@ double Evaluator::eval(SyntaxTreeNode *root) {
         if (StringUtils::stringToDouble(root->token, ret) == true) {
             return ret;
         } else {
-            std::cout << "Error parsing constant: " << root->token << "\n";
+            db("Error parsing constant: " << root->token);
             exit(1);
         }
     }
@@ -46,13 +46,13 @@ double Evaluator::eval(SyntaxTreeNode *root) {
     // If token is an operator, calculate result from its children and return evaluated value.
     if (root->keywordType == KEYWORD_OPERATOR) {
         double ret = mapOp(root->token, results);
-        std::cout << root->token << " returns [" << ret << "]\n";
+        db(root->token << " returns [" << ret << "]");
         return ret;
     }
 
     // TODO if token is a UDF, its children are its arguments. Map to its definition.
     if (root->keywordType == KEYWORD_SYMBOL) {
-        std::cout << "Symbol:" << root->token << "\n";
+        db("Symbol:" << root->token);
         return evalSymbol(root);
     }
 
@@ -71,7 +71,7 @@ double Evaluator::mapOp(const std::string &op, std::vector<double> vOperands) {
             ret += vOperands.at(i);
         }
     } else if (op == "-") {
-        AssertError::assert(vOperands.size() == 2, "Error. Substraction takes 2 operands.");
+        eassert(vOperands.size() == 2, "Error. Substraction takes 2 operands.");
         ret = vOperands.at(0) - vOperands.at(1);
     } else if (op == "*") {
         ret = vOperands.at(0);
@@ -79,29 +79,29 @@ double Evaluator::mapOp(const std::string &op, std::vector<double> vOperands) {
             ret *= vOperands.at(i);
         }
     } else if (op == "/") {
-        AssertError::assert(vOperands.size() == 2, "Error. Division takes 2 operands.");
+        eassert(vOperands.size() == 2, "Error. Division takes 2 operands.");
         ret = vOperands.at(0) / vOperands.at(1);
     } else if (op == "<") {
-        AssertError::assert(vOperands.size() == 2, "Error. Comparison takes 2 operands.");
+        eassert(vOperands.size() == 2, "Error. Comparison takes 2 operands.");
         ret = (double)(vOperands.at(0) < vOperands.at(1));
     } else if (op == ">") {
-        AssertError::assert(vOperands.size() == 2, "Error. Comparison takes 2 operands.");
+        eassert(vOperands.size() == 2, "Error. Comparison takes 2 operands.");
         ret = (double)(vOperands.at(0) > vOperands.at(1));
     } else if (op == "=") {
-        AssertError::assert(vOperands.size() == 2, "Error. Comparison takes 2 operands.");
+        eassert(vOperands.size() == 2, "Error. Comparison takes 2 operands.");
         ret = (double)(vOperands.at(0) == vOperands.at(1));
     } else if (op == "&") {
-        AssertError::assert(vOperands.size() == 2, "Error. Comparison takes 2 operands.");
+        eassert(vOperands.size() == 2, "Error. Comparison takes 2 operands.");
         ret = (double)(vOperands.at(0) && vOperands.at(1));
     } else if (op == "|") {
-        AssertError::assert(vOperands.size() == 2, "Error. Comparison takes 2 operands.");
+        eassert(vOperands.size() == 2, "Error. Comparison takes 2 operands.");
         ret = (double)(vOperands.at(0) || vOperands.at(1));
     }
     return ret;
 }
 
 double Evaluator::evalConditional(SyntaxTreeNode *node) {
-    AssertError::assert((node->childNodes.size() == 2 || node->childNodes.size() == 3), "Error. Conditional takes 2-3 arguments.");
+    eassert((node->childNodes.size() == 2 || node->childNodes.size() == 3), "Error. Conditional takes 2-3 arguments.");
 
     double test = eval(node->childNodes[0]);
     double ret = 0;
@@ -122,29 +122,29 @@ void Evaluator::evalVarDef(SyntaxTreeNode *node) {
     sym.type = SyntaxTreeNode::Symbol::SYMBOL_TYPE_VAR;
     sym.value = val;
 
-    std::cout << "Adding symbol " << id << "=" << val << "\n";
+    db("Adding symbol " << id << "=" << val);
     node->parent->propagateSymbol({id, sym});
 }
 
 void Evaluator::evalLambdaDef(SyntaxTreeNode *node) {
-    AssertError::assert(node->childNodes.size() > 0, "Error. Lambda definition requires at least a symbol.");
-    std::cout << "Lambda def: " << node->childNodes[0]->token << "\n";
+    eassert(node->childNodes.size() > 0, "Error. Lambda definition requires at least a symbol.");
+    db("Lambda def: " << node->childNodes[0]->token);
 
 }
 
 double Evaluator::evalSymbol(SyntaxTreeNode *node) {
     // Look up node's symbolTable, get value
-    std::cout << "NodeID " << node->nodeid << "\n";
+    db("NodeID " << node->nodeid);
     auto it = node->symbolTable.find(node->token);
     if (it == node->symbolTable.end()) {
-        std::cout << "Undefined symbol " << node->token << "\n";
+        db("Undefined symbol " << node->token);
         exit(1);
     }
     if (it->second.type == SyntaxTreeNode::Symbol::SYMBOL_TYPE_VAR) {
-        std::cout << "Variable " << it->second.value << "\n";
+        db("Variable " << it->second.value);
         return it->second.value;
     } else {
-        std::cout << "Lambdas not yet implemented.\n";
+        db("Lambdas not yet implemented.");
         exit(1);
     }
 }

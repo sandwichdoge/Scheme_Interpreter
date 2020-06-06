@@ -8,4 +8,8 @@ class AssertError {
     static void assert(bool, const std::string& errMsg);
 };
 
+#define eassert(b, s) { \
+    AssertError::assert(b, s); \
+}
+
 #endif
