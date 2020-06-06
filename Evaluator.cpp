@@ -1,7 +1,8 @@
 #include "Evaluator.h"
 #include <iostream>
-#include "StringUtils.h"
-#include <cassert>
+#include "Utils/StringUtils.h"
+#include "Utils/AssertError.h"
+#include "Utils/Debug.h"
 #include <cmath>
 
 Evaluator::Evaluator() {
@@ -12,7 +13,7 @@ Evaluator::~Evaluator(){
 
 double Evaluator::eval(SyntaxTreeNode *root) {
     // Traverse and eval all children.
-    std::cout << "eval:" << root->token << "\n";
+    db("eval:" << root->token);
     std::cout << "Child nodes count:" << root->childNodes.size() << "\n";
     std::vector<double> results;
     
@@ -22,6 +23,8 @@ double Evaluator::eval(SyntaxTreeNode *root) {
         results.push_back(ret);
     } else if (root->keywordType == KEYWORD_VARIABLE_DEF) {
         evalVarDef(root);
+    } else if (root->keywordType == KEYWORD_LAMBDA_DEF) {
+        evalLambdaDef(root);
     } else { // For non-if clauses, evaluate everything first.
         for (std::size_t i = 0; i < root->childNodes.size(); ++i) {
             double ret = eval(root->childNodes[i]);
@@ -68,7 +71,7 @@ double Evaluator::mapOp(const std::string &op, std::vector<double> vOperands) {
             ret += vOperands.at(i);
         }
     } else if (op == "-") {
-        assert(vOperands.size() == 2 && "Error. Substraction takes 2 operands.");
+        AssertError::assert(vOperands.size() == 2, "Error. Substraction takes 2 operands.");
         ret = vOperands.at(0) - vOperands.at(1);
     } else if (op == "*") {
         ret = vOperands.at(0);
@@ -76,29 +79,29 @@ double Evaluator::mapOp(const std::string &op, std::vector<double> vOperands) {
             ret *= vOperands.at(i);
         }
     } else if (op == "/") {
-        assert(vOperands.size() == 2 && "Error. Division takes 2 operands.");
+        AssertError::assert(vOperands.size() == 2, "Error. Division takes 2 operands.");
         ret = vOperands.at(0) / vOperands.at(1);
     } else if (op == "<") {
-        assert(vOperands.size() == 2 && "Error. Comparison takes 2 operands.");
+        AssertError::assert(vOperands.size() == 2, "Error. Comparison takes 2 operands.");
         ret = (double)(vOperands.at(0) < vOperands.at(1));
     } else if (op == ">") {
-        assert(vOperands.size() == 2 && "Error. Comparison takes 2 operands.");
+        AssertError::assert(vOperands.size() == 2, "Error. Comparison takes 2 operands.");
         ret = (double)(vOperands.at(0) > vOperands.at(1));
     } else if (op == "=") {
-        assert(vOperands.size() == 2 && "Error. Comparison takes 2 operands.");
+        AssertError::assert(vOperands.size() == 2, "Error. Comparison takes 2 operands.");
         ret = (double)(vOperands.at(0) == vOperands.at(1));
     } else if (op == "&") {
-        assert(vOperands.size() == 2 && "Error. Comparison takes 2 operands.");
+        AssertError::assert(vOperands.size() == 2, "Error. Comparison takes 2 operands.");
         ret = (double)(vOperands.at(0) && vOperands.at(1));
     } else if (op == "|") {
-        assert(vOperands.size() == 2 && "Error. Comparison takes 2 operands.");
+        AssertError::assert(vOperands.size() == 2, "Error. Comparison takes 2 operands.");
         ret = (double)(vOperands.at(0) || vOperands.at(1));
     }
     return ret;
 }
 
 double Evaluator::evalConditional(SyntaxTreeNode *node) {
-    assert((node->childNodes.size() == 2 || node->childNodes.size() == 3) && "Error. Conditional takes 2-3 arguments.");
+    AssertError::assert((node->childNodes.size() == 2 || node->childNodes.size() == 3), "Error. Conditional takes 2-3 arguments.");
 
     double test = eval(node->childNodes[0]);
     double ret = 0;
@@ -121,6 +124,12 @@ void Evaluator::evalVarDef(SyntaxTreeNode *node) {
 
     std::cout << "Adding symbol " << id << "=" << val << "\n";
     node->parent->propagateSymbol({id, sym});
+}
+
+void Evaluator::evalLambdaDef(SyntaxTreeNode *node) {
+    AssertError::assert(node->childNodes.size() > 0, "Error. Lambda definition requires at least a symbol.");
+    std::cout << "Lambda def: " << node->childNodes[0]->token << "\n";
+
 }
 
 double Evaluator::evalSymbol(SyntaxTreeNode *node) {

@@ -1,7 +1,5 @@
-#include "StringUtils.h"
 #include "Interpreter.h"
-
-#define DEBUG
+#include <iostream>
 
 int main(int argc, char *argv[]) {
     if (argc < 2) {
@@ -15,6 +13,7 @@ int main(int argc, char *argv[]) {
 
     if (pInterpreter->loadFile(sourceFile) < 0) {
         std::cout << "Failure: Could not open source file.\n";
+        delete pInterpreter;
         return -2;
     }
     double final = 0;

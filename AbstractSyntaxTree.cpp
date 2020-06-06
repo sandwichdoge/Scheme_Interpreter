@@ -1,5 +1,5 @@
 #include "AbstractSyntaxTree.h"
-#include "StringUtils.h"
+#include "Utils/StringUtils.h"
 
 std::size_t SyntaxTreeNode::allocated = 0;
 

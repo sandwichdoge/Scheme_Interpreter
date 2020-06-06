@@ -1,5 +1,5 @@
 #include "Lexer.h"
-#include "StringUtils.h"
+#include "Utils/StringUtils.h"
 
 Lexer::Lexer() {}
 Lexer::~Lexer() {}

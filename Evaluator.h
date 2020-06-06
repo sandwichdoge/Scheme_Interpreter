@@ -11,6 +11,7 @@ public:
 private:
     double mapOp(const std::string &op, std::vector<double> vOperands);
     void evalVarDef(SyntaxTreeNode *node);
+    void evalLambdaDef(SyntaxTreeNode *node);
     double evalConditional(SyntaxTreeNode *node);
     double evalSymbol(SyntaxTreeNode* node);
     bool isEqual(double x, double y);

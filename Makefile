@@ -1,5 +1,6 @@
 OBJECTS=main.o \
-		StringUtils.o \
+		Utils/StringUtils.o \
+		Utils/AssertError.o \
 		Interpreter.o \
 		SyntaxChecker.o \
 		Lexer.o \
@@ -7,8 +8,8 @@ OBJECTS=main.o \
 		Parser.o \
 		Evaluator.o 
 		
-
-CFLAGS = -std=c++11 -march=native -g -fsanitize=address -Wall -Wpedantic
+DEBUG = -DDEBUG -g -fsanitize=address
+CFLAGS = -std=c++11 -march=native  -Wall -Wpedantic $(DEBUG)
 
 %.o: %.cpp
 	$(CXX) -c $(CFLAGS) $< -o $@
