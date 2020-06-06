@@ -98,7 +98,7 @@ double Evaluator::mapOp(const std::string &op, std::vector<double> vOperands) {
 }
 
 double Evaluator::evalConditional(SyntaxTreeNode *node) {
-    assert(node->childNodes.size() == 3 && "Error. Conditional takes 3 arguments.");
+    assert((node->childNodes.size() == 2 || node->childNodes.size() == 3) && "Error. Conditional takes 2-3 arguments.");
 
     double test = eval(node->childNodes[0]);
     double ret = 0;
