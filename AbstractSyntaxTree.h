@@ -43,6 +43,8 @@ public:
     bool evaluated = false;
     double value;
     std::size_t nodeid;
+    // Make a copy of another node, recursively duplicate all children. All current children will be deleted.
+    void copyFrom(const SyntaxTreeNode* other, bool preserveParent);
 private:
     static std::size_t allocated;
 

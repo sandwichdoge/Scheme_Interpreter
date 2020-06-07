@@ -31,7 +31,11 @@ double Evaluator::eval(SyntaxTreeNode *root) {
             break;
         }
         case (KEYWORD_CONSTANT): {
-            eassert(StringUtils::stringToDouble(root->token, ret) == true, "Error. Invalid number:" + root->token);
+            if (root->evaluated) {
+                ret = root->value;
+            } else {
+                eassert(StringUtils::stringToDouble(root->token, ret) == true, "Error. Invalid number:" + root->token);
+            }
             break;
         }
         // For tokens with potentially unlimited children, evaluate everything first.
@@ -60,7 +64,7 @@ double Evaluator::eval(SyntaxTreeNode *root) {
         }
     }
 
-    // In case of something like ((2)) or ((1) (2)), this happens.
+    // In case of something like ((2)) or ((1) (2)), i.e empty tokens, this happens.
     root->evaluated = true;
     root->value = ret;
     return ret;
@@ -160,10 +164,6 @@ double Evaluator::evalSymbol(SyntaxTreeNode *node) {
         db("Variable " << it->second.value);
         return it->second.value;
     } else {
-        db("Lambdas not yet implemented.");
-        // Check and replace all children nodes with argument nodes, make a copy of node then eval.
-        // Make a node in place, traverse, 
-        // swap all nodes whose token equals argSymbol with real argValue.
         SyntaxTreeNode argValue = *(node->childNodes[0]); // Real value
         std::string argSymbol = it->second.funcDef->childNodes[1]->token; // In def
         SyntaxTreeNode *lambdaDef = it->second.funcDef->childNodes[2]; // Lambda def's syntax node
@@ -177,8 +177,11 @@ double Evaluator::evalSymbol(SyntaxTreeNode *node) {
         node->token = lambdaDef->token;
         node->keywordType = lambdaDef->keywordType;
         for (std::size_t i = 0; i < lambdaDef->childNodes.size(); ++i) {
+            db("New child");
             SyntaxTreeNode *child = new SyntaxTreeNode();
-            *child = *(lambdaDef->childNodes[i]);
+            // TODO bug here, need to create new children for child as well.
+            child->copyFrom(lambdaDef->childNodes[i], true);
+            child->parent = node;
             node->childNodes.push_back(child);
         }
     
@@ -188,23 +191,34 @@ double Evaluator::evalSymbol(SyntaxTreeNode *node) {
         }
 
         // Evaluate self
-        //eval(node);
+        db("Evaluating self");
+        double ret = eval(node);
 
         // Clean up
         for (std::size_t i = 0; i < node->childNodes.size(); ++i) {
             delete node->childNodes[i];
         }
         node->childNodes.clear();
-        return 0;
+        return ret;
     }
 }
 
 void Evaluator::expandVar(SyntaxTreeNode* functionNode, const std::string& argSymbol, double val) {
+    db("expand var value = " << val);
+    db("children count:" << functionNode->childNodes.size());
+    db("parent:" << functionNode->parent);
+    db("parent's token:" << functionNode->parent->token);
+    db("self's token:" << functionNode->token);
+    db("self's keywordType:[SYMBOL=4]" << functionNode->keywordType);
+    __asm__("int $3");
+    if (functionNode->keywordType == KEYWORD_SYMBOL && functionNode->token == argSymbol) {
+        db("Found symbol " + argSymbol);
+        functionNode->keywordType = KEYWORD_CONSTANT;
+        functionNode->evaluated = true;
+        functionNode->value = val;
+    }
     for (std::size_t i = 0; i < functionNode->childNodes.size(); ++i) {
         expandVar(functionNode->childNodes[i], argSymbol, val);
-    }
-    if (functionNode->keywordType == KEYWORD_SYMBOL && functionNode->token == argSymbol) {
-        functionNode->value = val;
     }
 }
 
