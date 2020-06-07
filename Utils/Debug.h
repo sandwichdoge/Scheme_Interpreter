@@ -4,7 +4,7 @@
 
 #ifdef DEBUG
 #define db(str) { \
-                    std::cout << str << "\n"; \
+                    std::cout << __FILE__ << ":" << __LINE__ << "\t" << str << "\n"; \
                 }
 #else
 #define db(str) {}

@@ -27,7 +27,7 @@ public:
     ~SyntaxTreeNode();
     // Create a child AST node.
     SyntaxTreeNode *createChildNode();
-    // Clean up self and all children.
+    // Clean up all children.
     void cleanSyntaxTree();
 
     SyntaxTreeNode *parent;
@@ -43,10 +43,13 @@ public:
     bool evaluated = false;
     double value;
     std::size_t nodeid;
-    // Make a copy of another node, recursively duplicate all children. All current children will be deleted.
+    // Make a copy of another node, recursively duplicate all children.
+    // Preserve root pointer, throw away children. preserveParent: True=copy other's parent too.
     void copyFrom(const SyntaxTreeNode* other, bool preserveParent);
 private:
     static std::size_t allocated;
-
+    // Return root of new duplicated tree. Symbol table and is not copied because scoping.
+    // Must cleanSyntaxTree() before calling this.
+    SyntaxTreeNode* duplicate(const SyntaxTreeNode* other);
 };
 #endif

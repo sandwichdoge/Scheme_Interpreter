@@ -67,6 +67,7 @@ double Evaluator::eval(SyntaxTreeNode *root) {
     // In case of something like ((2)) or ((1) (2)), i.e empty tokens, this happens.
     root->evaluated = true;
     root->value = ret;
+    db("Return:" << ret);
     return ret;
 }
 
@@ -167,23 +168,9 @@ double Evaluator::evalSymbol(SyntaxTreeNode *node) {
         SyntaxTreeNode argValue = *(node->childNodes[0]); // Real value
         std::string argSymbol = it->second.funcDef->childNodes[1]->token; // In def
         SyntaxTreeNode *lambdaDef = it->second.funcDef->childNodes[2]; // Lambda def's syntax node
-        // No more use for arguments
-        for (std::size_t i = 0; i < node->childNodes.size(); ++i) {
-            delete node->childNodes[i];
-        }
-        node->childNodes.clear();
 
         // Copy lambda def into node. Lambda def is just a blueprint.
-        node->token = lambdaDef->token;
-        node->keywordType = lambdaDef->keywordType;
-        for (std::size_t i = 0; i < lambdaDef->childNodes.size(); ++i) {
-            db("New child");
-            SyntaxTreeNode *child = new SyntaxTreeNode();
-            // TODO bug here, need to create new children for child as well.
-            child->copyFrom(lambdaDef->childNodes[i], true);
-            child->parent = node;
-            node->childNodes.push_back(child);
-        }
+        node->copyFrom(lambdaDef, true);
     
         // Recursively replace argSymbol with real argValue for all children.
         if (argValue.evaluated) {
@@ -195,10 +182,9 @@ double Evaluator::evalSymbol(SyntaxTreeNode *node) {
         double ret = eval(node);
 
         // Clean up
-        for (std::size_t i = 0; i < node->childNodes.size(); ++i) {
-            delete node->childNodes[i];
-        }
+        node->cleanSyntaxTree();
         node->childNodes.clear();
+        db("Return from func:" << ret);
         return ret;
     }
 }
@@ -210,7 +196,7 @@ void Evaluator::expandVar(SyntaxTreeNode* functionNode, const std::string& argSy
     db("parent's token:" << functionNode->parent->token);
     db("self's token:" << functionNode->token);
     db("self's keywordType:[SYMBOL=4]" << functionNode->keywordType);
-    __asm__("int $3");
+    //__asm__("int $3");
     if (functionNode->keywordType == KEYWORD_SYMBOL && functionNode->token == argSymbol) {
         db("Found symbol " + argSymbol);
         functionNode->keywordType = KEYWORD_CONSTANT;
