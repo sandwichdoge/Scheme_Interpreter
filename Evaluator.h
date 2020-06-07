@@ -10,12 +10,13 @@ public:
     double eval(SyntaxTreeNode *root);
 private:
     double mapOp(const std::string &op, std::vector<double> vOperands);
+    double evalOp(SyntaxTreeNode *node);
     void evalVarDef(SyntaxTreeNode *node);
     void evalLambdaDef(SyntaxTreeNode *node);
     double evalConditional(SyntaxTreeNode *node);
     double evalSymbol(SyntaxTreeNode* node);
     // Traverse node, swap all nodes whose token = argSymbol with val.
-    void expandVar(SyntaxTreeNode* functionNode, const std::string& argSymbol, SyntaxTreeNode* val);
+    void expandVar(SyntaxTreeNode* functionNode, const std::string& argSymbol, double val);
     bool isEqual(double x, double y);
 };
 

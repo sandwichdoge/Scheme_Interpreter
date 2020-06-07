@@ -16,49 +16,63 @@ double Evaluator::eval(SyntaxTreeNode *root) {
     db("eval:" << root->token);
     db("Child nodes count:" << root->childNodes.size());
     double ret = 0;
-    std::vector<double> results; // Evaluted results of all children.
     
-    // Evaluate IF test before clauses.
-    if (root->keywordType == KEYWORD_CONDITIONAL) {
-        ret = evalConditional(root);
-    } else if (root->keywordType == KEYWORD_VARIABLE_DEF) {
-        evalVarDef(root);
-    } else if (root->keywordType == KEYWORD_LAMBDA_DEF) {
-        evalLambdaDef(root);
-    } else { // For non-if clauses, evaluate everything first.
-        for (std::size_t i = 0; i < root->childNodes.size(); ++i) {
-            ret = eval(root->childNodes[i]);
-            results.push_back(ret);
+    switch (root->keywordType) {
+        case (KEYWORD_CONDITIONAL): {
+            ret = evalConditional(root);
+            break;
+        }
+        case (KEYWORD_VARIABLE_DEF): {
+            evalVarDef(root);
+            break;
+        }
+        case (KEYWORD_LAMBDA_DEF): {
+            evalLambdaDef(root);
+            break;
+        }
+        case (KEYWORD_CONSTANT): {
+            eassert(StringUtils::stringToDouble(root->token, ret) == true, "Error. Invalid number:" + root->token);
+            break;
+        }
+        // For tokens with potentially unlimited children, evaluate everything first.
+        default: {
+            for (std::size_t i = 0; i < root->childNodes.size(); ++i) {
+                ret = eval(root->childNodes[i]);
+            }
+            break;
         }
     }
 
-    // If keyword is a constant, convert it to double and return it.
-    if (root->keywordType == KEYWORD_CONSTANT) {
-        double ret = 0;
-        if (StringUtils::stringToDouble(root->token, ret) == true) {
-            return ret;
-        } else {
-            db("Error parsing constant: " << root->token);
-            exit(1);
+    switch (root->keywordType) {
+        // If token is an operator, calculate result from its children and return evaluated value.
+        case (KEYWORD_OPERATOR): {
+            ret = evalOp(root);
+            break;
         }
-    }
-
-    // If token is an operator, calculate result from its children and return evaluated value.
-    if (root->keywordType == KEYWORD_OPERATOR) {
-        ret = mapOp(root->token, results);
-        return ret;
-    }
-
-    // TODO if token is a UDF, its children are its arguments. Map to its definition.
-    if (root->keywordType == KEYWORD_SYMBOL) {
-        db("Symbol:" << root->token);
-        return evalSymbol(root);
+        // If token is a symbol, map to its definition.
+        case (KEYWORD_SYMBOL): {
+            db("Symbol:" << root->token);
+            ret = evalSymbol(root);
+            break;
+        }
+        default: { // Empty token.
+            break;
+        }
     }
 
     // In case of something like ((2)) or ((1) (2)), this happens.
     root->evaluated = true;
     root->value = ret;
     return ret;
+}
+
+double Evaluator::evalOp(SyntaxTreeNode *node) {
+    std::vector<double> results; // Evaluted results of all children.
+    for (std::size_t i = 0; i < node->childNodes.size(); ++i) {
+        eassert(node->childNodes[i]->evaluated == true, "Error. Failed to evaluate operator, children not evaluted.");
+        results.push_back(node->childNodes[i]->value);
+    }
+    return mapOp(node->token, results);
 }
 
 double Evaluator::mapOp(const std::string &op, std::vector<double> vOperands) {
@@ -168,8 +182,10 @@ double Evaluator::evalSymbol(SyntaxTreeNode *node) {
             node->childNodes.push_back(child);
         }
     
-        // Replace argSymbol with real argValue. Only keep children of argValue.
-        //expandVar(node, argSymbol, &argValue);
+        // Recursively replace argSymbol with real argValue for all children.
+        if (argValue.evaluated) {
+            expandVar(node, argSymbol, argValue.value);
+        }
 
         // Evaluate self
         //eval(node);
@@ -183,13 +199,12 @@ double Evaluator::evalSymbol(SyntaxTreeNode *node) {
     }
 }
 
-void Evaluator::expandVar(SyntaxTreeNode* functionNode, const std::string& argSymbol, SyntaxTreeNode* val) {
+void Evaluator::expandVar(SyntaxTreeNode* functionNode, const std::string& argSymbol, double val) {
     for (std::size_t i = 0; i < functionNode->childNodes.size(); ++i) {
         expandVar(functionNode->childNodes[i], argSymbol, val);
     }
     if (functionNode->keywordType == KEYWORD_SYMBOL && functionNode->token == argSymbol) {
-        // Keep children of val.
-        
+        functionNode->value = val;
     }
 }
 
