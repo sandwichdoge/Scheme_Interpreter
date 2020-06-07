@@ -14,6 +14,8 @@ private:
     void evalLambdaDef(SyntaxTreeNode *node);
     double evalConditional(SyntaxTreeNode *node);
     double evalSymbol(SyntaxTreeNode* node);
+    // Traverse node, swap all nodes whose token = argSymbol with val.
+    void expandVar(SyntaxTreeNode* functionNode, const std::string& argSymbol, SyntaxTreeNode* val);
     bool isEqual(double x, double y);
 };
 

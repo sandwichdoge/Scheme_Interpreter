@@ -39,6 +39,9 @@ public:
     std::map<std::string, SyntaxTreeNode::Symbol> symbolTable;
     // Add symbol to all children's symbol table.
     void propagateSymbol(std::pair<std::string, SyntaxTreeNode::Symbol> symbol);
+
+    bool evaluated = false;
+    double value;
     std::size_t nodeid;
 private:
     static std::size_t allocated;

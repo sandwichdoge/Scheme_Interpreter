@@ -15,19 +15,19 @@ double Evaluator::eval(SyntaxTreeNode *root) {
     // Traverse and eval all children.
     db("eval:" << root->token);
     db("Child nodes count:" << root->childNodes.size());
-    std::vector<double> results;
+    double ret = 0;
+    std::vector<double> results; // Evaluted results of all children.
     
     // Evaluate IF test before clauses.
     if (root->keywordType == KEYWORD_CONDITIONAL) {
-        double ret = evalConditional(root);
-        results.push_back(ret);
+        ret = evalConditional(root);
     } else if (root->keywordType == KEYWORD_VARIABLE_DEF) {
         evalVarDef(root);
     } else if (root->keywordType == KEYWORD_LAMBDA_DEF) {
         evalLambdaDef(root);
     } else { // For non-if clauses, evaluate everything first.
         for (std::size_t i = 0; i < root->childNodes.size(); ++i) {
-            double ret = eval(root->childNodes[i]);
+            ret = eval(root->childNodes[i]);
             results.push_back(ret);
         }
     }
@@ -45,8 +45,7 @@ double Evaluator::eval(SyntaxTreeNode *root) {
 
     // If token is an operator, calculate result from its children and return evaluated value.
     if (root->keywordType == KEYWORD_OPERATOR) {
-        double ret = mapOp(root->token, results);
-        db(root->token << " returns [" << ret << "]");
+        ret = mapOp(root->token, results);
         return ret;
     }
 
@@ -57,11 +56,9 @@ double Evaluator::eval(SyntaxTreeNode *root) {
     }
 
     // In case of something like ((2)) or ((1) (2)), this happens.
-    if (results.size() > 0) {
-        return results[results.size() - 1]; // Return last result.
-    } else {
-        return 0;
-    }
+    root->evaluated = true;
+    root->value = ret;
+    return ret;
 }
 
 double Evaluator::mapOp(const std::string &op, std::vector<double> vOperands) {
@@ -126,14 +123,13 @@ void Evaluator::evalVarDef(SyntaxTreeNode *node) {
     node->parent->propagateSymbol({id, sym});
 }
 
+// (lambda (symbol) (var1) (definition))
 void Evaluator::evalLambdaDef(SyntaxTreeNode *node) {
-    eassert(node->childNodes.size() > 0, "Error. Lambda definition requires at least a symbol.");
+    eassert(node->childNodes.size() >= 3, "Error. Syntax error in lambda definition: " + node->childNodes[0]->token);
     db("Lambda def: " << node->childNodes[0]->token);
     SyntaxTreeNode::Symbol sym;
     sym.type = SyntaxTreeNode::Symbol::SYMBOL_TYPE_LAMBDA;
     sym.funcDef = node;
-    // TODO Save function def to table, when called, check and replace all children nodes 
-    // with argument nodes, make a copy of node then eval.
     std::string id = node->childNodes[0]->token;
     node->parent->propagateSymbol({id, sym});
 }
@@ -151,7 +147,49 @@ double Evaluator::evalSymbol(SyntaxTreeNode *node) {
         return it->second.value;
     } else {
         db("Lambdas not yet implemented.");
-        exit(1);
+        // Check and replace all children nodes with argument nodes, make a copy of node then eval.
+        // Make a node in place, traverse, 
+        // swap all nodes whose token equals argSymbol with real argValue.
+        SyntaxTreeNode argValue = *(node->childNodes[0]); // Real value
+        std::string argSymbol = it->second.funcDef->childNodes[1]->token; // In def
+        SyntaxTreeNode *lambdaDef = it->second.funcDef->childNodes[2]; // Lambda def's syntax node
+        // No more use for arguments
+        for (std::size_t i = 0; i < node->childNodes.size(); ++i) {
+            delete node->childNodes[i];
+        }
+        node->childNodes.clear();
+
+        // Copy lambda def into node. Lambda def is just a blueprint.
+        node->token = lambdaDef->token;
+        node->keywordType = lambdaDef->keywordType;
+        for (std::size_t i = 0; i < lambdaDef->childNodes.size(); ++i) {
+            SyntaxTreeNode *child = new SyntaxTreeNode();
+            *child = *(lambdaDef->childNodes[i]);
+            node->childNodes.push_back(child);
+        }
+    
+        // Replace argSymbol with real argValue. Only keep children of argValue.
+        //expandVar(node, argSymbol, &argValue);
+
+        // Evaluate self
+        //eval(node);
+
+        // Clean up
+        for (std::size_t i = 0; i < node->childNodes.size(); ++i) {
+            delete node->childNodes[i];
+        }
+        node->childNodes.clear();
+        return 0;
+    }
+}
+
+void Evaluator::expandVar(SyntaxTreeNode* functionNode, const std::string& argSymbol, SyntaxTreeNode* val) {
+    for (std::size_t i = 0; i < functionNode->childNodes.size(); ++i) {
+        expandVar(functionNode->childNodes[i], argSymbol, val);
+    }
+    if (functionNode->keywordType == KEYWORD_SYMBOL && functionNode->token == argSymbol) {
+        // Keep children of val.
+        
     }
 }
 
