@@ -129,7 +129,13 @@ void Evaluator::evalVarDef(SyntaxTreeNode *node) {
 void Evaluator::evalLambdaDef(SyntaxTreeNode *node) {
     eassert(node->childNodes.size() > 0, "Error. Lambda definition requires at least a symbol.");
     db("Lambda def: " << node->childNodes[0]->token);
-
+    SyntaxTreeNode::Symbol sym;
+    sym.type = SyntaxTreeNode::Symbol::SYMBOL_TYPE_LAMBDA;
+    sym.funcDef = node;
+    // TODO Save function def to table, when called, check and replace all children nodes 
+    // with argument nodes, make a copy of node then eval.
+    std::string id = node->childNodes[0]->token;
+    node->parent->propagateSymbol({id, sym});
 }
 
 double Evaluator::evalSymbol(SyntaxTreeNode *node) {

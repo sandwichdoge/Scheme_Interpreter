@@ -13,7 +13,8 @@ public:
     public:
         enum SYMBOL_TYPE {SYMBOL_TYPE_VAR, SYMBOL_TYPE_LAMBDA};
         enum SYMBOL_TYPE type;
-        double value;
+        double value = 0;
+        SyntaxTreeNode* funcDef = nullptr; // Node containing definition of function.
         Symbol& operator=(const Symbol& other) {
             if (this != &other) {
                 this->type = other.type;
