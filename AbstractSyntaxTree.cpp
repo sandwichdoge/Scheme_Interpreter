@@ -31,7 +31,7 @@ void SyntaxTreeNode::identifyKeyword() {
     std::string tok = this->token;
 
     if (tok == "*" || tok == "+" || tok == "-" || tok == "/" || tok == "<" || tok == ">" || 
-        tok == "=" || tok == "&" || tok == "|" || tok == ">="|| tok == "<=") {
+        tok == "=="|| tok == "&&"|| tok == "||"|| tok == ">="|| tok == "<=") {
         this->keywordType = KEYWORD_OPERATOR;
     } else if (StringUtils::isValidNumberString(tok)) {
         this->keywordType = KEYWORD_CONSTANT;
