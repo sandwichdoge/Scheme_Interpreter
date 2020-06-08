@@ -165,7 +165,7 @@ double Evaluator::evalSymbol(SyntaxTreeNode *node) {
     db("symbolTable size:" << node->symbolTable.size());
     auto symbolTableEntry = node->symbolTable.find(node->token);
     if (symbolTableEntry == node->symbolTable.end()) {
-        db("Undefined symbol " << node->token);
+        std::cout << "Undefined symbol " << node->token << "\n";
         exit(1);
     }
     if (symbolTableEntry->second.type == SyntaxTreeNode::Symbol::SYMBOL_TYPE_VAR) {

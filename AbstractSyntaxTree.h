@@ -5,7 +5,7 @@
 #include <string>
 
 enum KEYWORD_TYPE {KEYWORD_UNKNOWN, KEYWORD_OPERATOR, KEYWORD_CONSTANT, KEYWORD_CONDITIONAL, 
-    KEYWORD_SYMBOL, KEYWORD_LAMBDA_DEF, KEYWORD_VARIABLE_DEF};
+    KEYWORD_SYMBOL, KEYWORD_LAMBDA_DEF, KEYWORD_VARIABLE_DEF, KEYWORD_EMPTY};
 
 class SyntaxTreeNode {
 public:
@@ -33,7 +33,7 @@ public:
     SyntaxTreeNode *parent;
     std::string token;
     std::vector<SyntaxTreeNode *> childNodes;
-    void identifyKeyword();
+    enum KEYWORD_TYPE identifyKeyword();
     enum KEYWORD_TYPE keywordType = KEYWORD_UNKNOWN;
     enum KEYWORD_TYPE what() {return keywordType;}
     std::map<std::string, SyntaxTreeNode::Symbol> symbolTable;

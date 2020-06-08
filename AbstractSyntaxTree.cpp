@@ -27,7 +27,7 @@ void SyntaxTreeNode::cleanSyntaxTree() {
     }
 }
 
-void SyntaxTreeNode::identifyKeyword() {
+enum KEYWORD_TYPE SyntaxTreeNode::identifyKeyword() {
     std::string tok = this->token;
 
     if (tok == "*" || tok == "+" || tok == "-" || tok == "/" || tok == "<" || tok == ">" || 
@@ -41,9 +41,13 @@ void SyntaxTreeNode::identifyKeyword() {
         this->keywordType = KEYWORD_VARIABLE_DEF;
     } else if (tok == "lambda") { // Function definition
         this->keywordType = KEYWORD_LAMBDA_DEF;
+    } else if (tok.empty()) {
+        this->keywordType = KEYWORD_EMPTY;
+        db("Warning. Empty keyword");
     } else {
         this->keywordType = KEYWORD_SYMBOL;
     } 
+    return this->keywordType;
 }
 
 void SyntaxTreeNode::propagateSymbol(std::pair<std::string, SyntaxTreeNode::Symbol> symbol) {
