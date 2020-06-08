@@ -14,6 +14,7 @@ class Interpreter {
     virtual ~Interpreter();
 
     int loadFile(const std::string &path);
+    int loadCode(const std::string &code);
 
     int checkSyntax();
     // Get tokens from source code

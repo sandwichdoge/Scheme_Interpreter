@@ -21,6 +21,15 @@ Interpreter::~Interpreter() {
     if (pSyntaxChecker) delete pSyntaxChecker;
 }
 
+int Interpreter::loadCode(const std::string &code) {
+    if (code.size() == 0) {
+        std::cout << "Error. Source code is empty.\n";
+        return -1;
+    }
+    _code = code;
+    return 0;
+}
+
 int Interpreter::loadFile(const std::string &path) {
     std::ifstream fd;
     fd.open(path);
@@ -34,6 +43,10 @@ int Interpreter::loadFile(const std::string &path) {
 
     fd.close();
     _code = buf.str();
+    if (_code.size() == 0) {
+        std::cout << "Error. Source code is empty.\n";
+        return -1;
+    }
     return 0;
 }
 
