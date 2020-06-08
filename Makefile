@@ -16,6 +16,8 @@ all: $(OBJECTS)
 debug: CFLAGS+=-g -fsanitize=address -DDEBUG
 debug: LDFLAGS+=-g
 debug: all
+debug:
+	$(AR) crf tests/libschemeinterp.a $(OBJECTS)
 
 %.o: %.cpp
 	$(CXX) -c $(CFLAGS) $< -o $@

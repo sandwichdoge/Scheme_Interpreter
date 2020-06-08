@@ -1,9 +1,11 @@
 INCLUDE=-Igoogletest/googletest/include
 
-OBJECTS=test_ast.o
+OBJECTS=test_ast.o \
+
+CFLAGS+=-g -fsanitize=address -march=native -DDEBUG
 
 all: $(OBJECTS)
-	$(CXX) test_main.cpp $(OBJECTS) -pthread -lgtest -o a.out $(INCLUDE) -L.
+	$(CXX) $(CFLAGS) test_main.cpp $(OBJECTS) -pthread -lgtest -o a.out $(INCLUDE) -L. -lschemeinterp
 	./a.out
 
 %.o: %.cpp

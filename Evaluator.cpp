@@ -157,19 +157,19 @@ double Evaluator::evalSymbol(SyntaxTreeNode *node) {
     // Look up node's symbolTable, get value
     db("NodeID " << node->nodeid);
     db("symbolTable size:" << node->symbolTable.size());
-    auto lookupToken = node->symbolTable.find(node->token);
-    if (lookupToken == node->symbolTable.end()) {
+    auto symbolTableEntry = node->symbolTable.find(node->token);
+    if (symbolTableEntry == node->symbolTable.end()) {
         db("Undefined symbol " << node->token);
         exit(1);
     }
-    if (lookupToken->second.type == SyntaxTreeNode::Symbol::SYMBOL_TYPE_VAR) {
-        db("Variable " << lookupToken->second.value);
-        return lookupToken->second.value;
+    if (symbolTableEntry->second.type == SyntaxTreeNode::Symbol::SYMBOL_TYPE_VAR) {
+        db("Variable " << symbolTableEntry->second.value);
+        return symbolTableEntry->second.value;
     } else { // SYMBOL_TYPE_FUNCTION
         eassert(node->childNodes.size() == 1, "Lambdas only takes 1 argument: " + node->token);
         SyntaxTreeNode argValue = *(node->childNodes[0]); // Real value
-        std::string argSymbol = lookupToken->second.funcDef->childNodes[1]->token; // In def
-        SyntaxTreeNode *lambdaDef = lookupToken->second.funcDef->childNodes[2]; // Lambda def's syntax node
+        std::string argSymbol = symbolTableEntry->second.funcDef->childNodes[1]->token; // In def
+        SyntaxTreeNode *lambdaDef = symbolTableEntry->second.funcDef->childNodes[2]; // Lambda def's syntax node
 
         // Copy lambda def into node. Lambda def is just a blueprint.
         node->copyFrom(lambdaDef, true);
