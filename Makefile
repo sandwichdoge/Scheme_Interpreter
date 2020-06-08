@@ -8,7 +8,7 @@ OBJECTS=main.o \
 		Parser.o \
 		Evaluator.o 
 		
-DEBUG = -DDEBUG -g -fsanitize=address
+DEBUG = -g -fsanitize=address #-DDEBUG
 CFLAGS = -std=c++11 -march=native  -Wall -Wpedantic $(DEBUG)
 
 %.o: %.cpp
@@ -19,3 +19,4 @@ all: $(OBJECTS)
 
 clean:
 	rm -f *.o *.out *.a
+	rm -f Utils/*.o Utils/*.a

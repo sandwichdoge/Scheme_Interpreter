@@ -11,4 +11,4 @@
     )
 )
 
-(factorial (5))
+(factorial (sum (4)))
