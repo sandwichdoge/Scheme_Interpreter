@@ -57,6 +57,14 @@ void SyntaxTreeNode::propagateSymbol(std::pair<std::string, SyntaxTreeNode::Symb
     }
 }
 
+void SyntaxTreeNode::propagateSymbolTable(std::map<std::string, SyntaxTreeNode::Symbol> table) {
+    for (std::size_t i = 0; i < childNodes.size(); ++i) {
+        childNodes[i]->propagateSymbolTable(table);
+        childNodes[i]->symbolTable = table;
+    }
+}
+
+
 void SyntaxTreeNode::copyFrom(const SyntaxTreeNode* other, bool preserveParent) {
     cleanSyntaxTree();
     this->childNodes.clear();
@@ -68,7 +76,6 @@ void SyntaxTreeNode::copyFrom(const SyntaxTreeNode* other, bool preserveParent) 
     for (std::size_t i = 0; i < newRoot->childNodes.size(); ++i) {
         this->childNodes.push_back(newRoot->childNodes[i]);
         this->childNodes[i]->parent = this;
-
     }
     delete newRoot;
     if (!preserveParent) {

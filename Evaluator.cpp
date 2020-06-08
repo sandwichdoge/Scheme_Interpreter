@@ -156,6 +156,7 @@ void Evaluator::evalLambdaDef(SyntaxTreeNode *node) {
 double Evaluator::evalSymbol(SyntaxTreeNode *node) {
     // Look up node's symbolTable, get value
     db("NodeID " << node->nodeid);
+    db("symbolTable size:" << node->symbolTable.size());
     auto it = node->symbolTable.find(node->token);
     if (it == node->symbolTable.end()) {
         db("Undefined symbol " << node->token);
@@ -171,6 +172,7 @@ double Evaluator::evalSymbol(SyntaxTreeNode *node) {
 
         // Copy lambda def into node. Lambda def is just a blueprint.
         node->copyFrom(lambdaDef, true);
+        node->propagateSymbolTable(node->symbolTable);
     
         // Recursively replace argSymbol with real argValue for all children.
         if (argValue.evaluated) {
