@@ -44,7 +44,7 @@ public:
     bool evaluated = false;
     double value;
     std::size_t nodeid;
-    // Make a copy of another node, recursively duplicate all children.
+    // Make a copy of another node, recursively duplicate all children. Copy everything except symbolTable.
     // Preserve root pointer, throw away children. preserveParent: True=copy other's parent too.
     void copyFrom(const SyntaxTreeNode* other, bool preserveParent);
 private:

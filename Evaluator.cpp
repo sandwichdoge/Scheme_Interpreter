@@ -95,23 +95,29 @@ double Evaluator::mapOp(const std::string &op, std::vector<double> vOperands) {
             ret *= vOperands.at(i);
         }
     } else if (op == "/") {
-        eassert(vOperands.size() == 2, "Error. Division takes 2 operands.");
+        eassert(vOperands.size() == 2, "Error. Division takes 2 operands:" + op);
         ret = vOperands.at(0) / vOperands.at(1);
     } else if (op == "<") {
-        eassert(vOperands.size() == 2, "Error. Comparison takes 2 operands.");
+        eassert(vOperands.size() == 2, "Error. Comparison takes 2 operands:" + op);
         ret = (double)(vOperands.at(0) < vOperands.at(1));
     } else if (op == ">") {
-        eassert(vOperands.size() == 2, "Error. Comparison takes 2 operands.");
+        eassert(vOperands.size() == 2, "Error. Comparison takes 2 operands:" + op);
         ret = (double)(vOperands.at(0) > vOperands.at(1));
     } else if (op == "=") {
-        eassert(vOperands.size() == 2, "Error. Comparison takes 2 operands.");
+        eassert(vOperands.size() == 2, "Error. Comparison takes 2 operands:" + op);
         ret = (double)(vOperands.at(0) == vOperands.at(1));
     } else if (op == "&") {
-        eassert(vOperands.size() == 2, "Error. Comparison takes 2 operands.");
+        eassert(vOperands.size() == 2, "Error. Comparison takes 2 operands:" + op);
         ret = (double)(vOperands.at(0) && vOperands.at(1));
     } else if (op == "|") {
-        eassert(vOperands.size() == 2, "Error. Comparison takes 2 operands.");
+        eassert(vOperands.size() == 2, "Error. Comparison takes 2 operands:" + op);
         ret = (double)(vOperands.at(0) || vOperands.at(1));
+    } else if (op == "<=") {
+        eassert(vOperands.size() == 2, "Error. Comparison takes 2 operands:" + op);
+        ret = (double)(vOperands.at(0) <= vOperands.at(1));
+    } else if (op == ">=") {
+        eassert(vOperands.size() == 2, "Error. Comparison takes 2 operands:" + op);
+        ret = (double)(vOperands.at(0) >= vOperands.at(1));
     }
     return ret;
 }
