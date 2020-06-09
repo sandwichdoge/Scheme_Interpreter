@@ -12,15 +12,12 @@ int Lexer::lex(const std::string& code, std::vector<std::string>& tokens) {
     if (tokenize(mutableCode, tokens) < 0) {
         return -2;
     }
-    for (std::size_t i = 0; i < tokens.size(); ++i) {
-        std::cout << tokens[i] << "\n";
-    }
     return 0;
 }
 
 int Lexer::sanitize(std::string& code) {
     // Sanitize
-    StringUtils::replace(code, "\n", " ");
+    //StringUtils::replace(code, "\n", " ");
     return 0;
 }
 
