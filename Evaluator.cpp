@@ -137,6 +137,7 @@ double Evaluator::evalConditional(SyntaxTreeNode *node) {
 
 // Eval "define" token. When a variable is defined, it must be evaluable.
 void Evaluator::evalVarDef(SyntaxTreeNode *node) {
+    eassert(node->childNodes.size() == 2, "Error. Variable def only takes 2 arguments." + node->token);
     double val = eval(node->childNodes[1]);
     std::string id = node->childNodes[0]->token;
 
