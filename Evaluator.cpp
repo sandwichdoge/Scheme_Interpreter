@@ -173,10 +173,16 @@ double Evaluator::evalSymbol(SyntaxTreeNode *node) {
         db("Variable " << symbolTableEntry->second.value);
         return symbolTableEntry->second.value;
     } else { // SYMBOL_TYPE_FUNCTION
-        eassert(node->childNodes.size() == 1, "Lambdas only takes 1 argument: " + node->token);
-        SyntaxTreeNode argValue = *(node->childNodes[0]); // Real value
-        std::string argSymbol = symbolTableEntry->second.funcDef->childNodes[1]->token; // In def
+        eassert(node->childNodes.size() <= 1, "Lambdas only takes 0-1 argument: " + node->token);
         SyntaxTreeNode *lambdaDef = symbolTableEntry->second.funcDef->childNodes[2]; // Lambda def's syntax node
+
+        // Try to process arguments accordingly to definition.
+        SyntaxTreeNode argValue;
+        std::string argSymbol;
+        if (node->childNodes.size() > 0) { // Lambda takes argument.
+            argValue = *(node->childNodes[0]); // Real value
+            argSymbol = symbolTableEntry->second.funcDef->childNodes[1]->token; // In def
+        }
 
         // Copy lambda def into node. Lambda def is just a blueprint.
         node->copyFrom(lambdaDef, true);
@@ -184,7 +190,7 @@ double Evaluator::evalSymbol(SyntaxTreeNode *node) {
         node->propagateSymbolTable(node->symbolTable);
     
         // Recursively replace argSymbol with real argValue for all children.
-        if (argValue.evaluated) {
+        if (node->childNodes.size() > 0 && argValue.evaluated) { // Lambda takes argument.
             expandVar(node, argSymbol, argValue.value);
         }
 
