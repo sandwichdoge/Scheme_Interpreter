@@ -1,4 +1,4 @@
-(lambda (inc) (a)
+(lambda inc a
     (+ 1 a)
 )
 (lambda (dec) (a)
