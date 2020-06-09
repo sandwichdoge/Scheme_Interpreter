@@ -17,7 +17,12 @@ int main(int argc, char *argv[]) {
         return -2;
     }
     double final = 0;
-    pInterpreter->run(final);
+    try {
+        pInterpreter->run(final);
+    } catch (...) {
+        std::cout << "Error occurred!\n";
+    }
+    
     std::cout << final << "\n";
 
     delete pInterpreter;

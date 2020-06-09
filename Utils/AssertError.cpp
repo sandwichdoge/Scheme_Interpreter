@@ -4,6 +4,6 @@
 void AssertError::assert(bool test, const std::string& errMsg) {
     if (!test) {
         std::cerr << errMsg << "\n";
-        exit(2);
+        throw errMsg;
     }
 }

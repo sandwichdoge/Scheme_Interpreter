@@ -165,10 +165,7 @@ double Evaluator::evalSymbol(SyntaxTreeNode *node) {
     db("NodeID " << node->nodeid);
     db("symbolTable size:" << node->symbolTable.size());
     auto symbolTableEntry = node->symbolTable.find(node->token);
-    if (symbolTableEntry == node->symbolTable.end()) {
-        std::cout << "Undefined symbol " << node->token << "\n";
-        exit(1);
-    }
+    eassert(symbolTableEntry != node->symbolTable.end(), "Undefined symbol " + node->token);
     if (symbolTableEntry->second.type == SyntaxTreeNode::Symbol::SYMBOL_TYPE_VAR) {
         db("Variable " << symbolTableEntry->second.value);
         return symbolTableEntry->second.value;
