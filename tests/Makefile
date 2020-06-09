@@ -1,6 +1,7 @@
 INCLUDE=-Igoogletest/googletest/include
 
 OBJECTS=test_ast.o \
+	test_Lexer.o \
 	test_Parser.o \
 	test_Evaluator.o \
 	test_Evaluator2.o
