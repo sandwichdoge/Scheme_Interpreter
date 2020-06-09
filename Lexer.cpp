@@ -1,5 +1,6 @@
 #include "Lexer.h"
 #include "Utils/StringUtils.h"
+#include "Utils/Debug.h"
 
 Lexer::Lexer() {}
 Lexer::~Lexer() {}
@@ -12,6 +13,9 @@ int Lexer::lex(const std::string& code, std::vector<std::string>& tokens) {
     if (tokenize(mutableCode, tokens) < 0) {
         return -2;
     }
+    for (std::size_t i = 0; i < tokens.size(); ++i) {
+        db(tokens[i]);
+    }
     return 0;
 }
 
@@ -21,8 +25,8 @@ int Lexer::sanitize(std::string& code) {
     return 0;
 }
 
+// WTF?? TODO: draw a state machine.
 int Lexer::tokenize(const std::string& code, std::vector<std::string> &tokens) {
-    // Tokenize into words
     bool isQuotes = false; // Whether we're in a pair of quotes.
     bool isWord = false;   // Whether we're in a word.
     std::size_t wordLen = 0;
@@ -32,6 +36,11 @@ int Lexer::tokenize(const std::string& code, std::vector<std::string> &tokens) {
             if (!isWord) {    // Initial value
                 tokens.push_back("\"");
                 isWord = true;
+            } else if (!isQuotes) {
+                std::string token = code.substr(wordStart, wordLen);
+                tokens.push_back(token);
+                tokens.push_back("\"");
+                wordLen = 1;
             }
             if (isQuotes) {
                 std::string token = code.substr(wordStart, wordLen);
