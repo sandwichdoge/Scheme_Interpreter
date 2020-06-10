@@ -12,7 +12,6 @@ void Parser::setTokens(std::vector<std::string> tokens) {
 int Parser::parse(SyntaxTreeNode *root) {
     std::string tok;
     if (consume(tok) < 0) return 0; // No more tokens
-    db("Current token:[" << tok << "]");
 
     SyntaxTreeNode *node;
     if (tok == "(") {
@@ -22,14 +21,11 @@ int Parser::parse(SyntaxTreeNode *root) {
         parse(root->parent);
     } else if (tok == "\"") {
         if (!_quotesOpen) {
-            db("Open quote");
             consume(tok);
             node = root->createChildNode();
             node->token = tok;
             node->keywordType = KEYWORD_STRING;
-            db("Token " << tok);
         } else {
-            db("Close quote");
         }
         _quotesOpen = !_quotesOpen;
         parse(root);
@@ -55,5 +51,6 @@ int Parser::consume(std::string& out) {
     if (_tokens.empty()) return -1;
     out = _tokens[0];
     _tokens.erase(_tokens.begin());
+    db("Consume token:[" << out << "]");
     return 0;
 }
