@@ -11,7 +11,7 @@ OBJECTS=main.o \
 CFLAGS += -std=c++11 -march=native -Wall -Wpedantic
 
 all: $(OBJECTS)
-	$(CXX) $(CFLAGS) $^ -o interpreter.out 
+	$(CXX) $(CFLAGS) $^ -o interpreter.out -pthread
 
 debug: CFLAGS+=-g -fsanitize=address -DDEBUG
 debug: LDFLAGS+=-g

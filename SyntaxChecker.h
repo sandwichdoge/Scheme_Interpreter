@@ -9,6 +9,9 @@ public:
     SyntaxChecker();
     ~SyntaxChecker();
     int checkSyntax(const std::string& code);
+private:
+    int checkBalancedParens(const std::string& code);
+    int checkBalancedQuotes(const std::string& code);
 };
 
 #endif
