@@ -25,7 +25,6 @@ int Parser::parse(SyntaxTreeNode *root) {
             node = root->createChildNode();
             node->token = tok;
             node->keywordType = KEYWORD_STRING;
-        } else {
         }
         _quotesOpen = !_quotesOpen;
         parse(root);
