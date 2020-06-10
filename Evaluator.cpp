@@ -34,7 +34,9 @@ double Evaluator::eval(SyntaxTreeNode *root) {
             if (root->evaluated) {
                 ret = root->value;
             } else {
-                eassert(StringUtils::stringToDouble(root->token, ret) == true, "Error. Invalid number:" + root->token);
+                bool tmp = StringUtils::stringToDouble(root->token, ret);
+                root->evaluated = true;
+                eassert(tmp == true, "Error. Invalid number:" + root->token);
             }
             break;
         }
