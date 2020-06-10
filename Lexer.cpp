@@ -27,61 +27,45 @@ int Lexer::sanitize(std::string& code) {
 
 // WTF?? TODO: draw a state machine.
 int Lexer::tokenize(const std::string& code, std::vector<std::string> &tokens) {
-    bool isQuotes = false; // Whether we're in a pair of quotes.
-    bool isWord = false;   // Whether we're in a word.
     std::size_t wordLen = 0;
     std::size_t wordStart = 0;
-    for (std::size_t i = 0; i < code.size(); ++i) {
-        if (code[i] == '"') { // Quotes met
-            if (!isWord) {    // Initial value
-                tokens.push_back("\"");
-                isWord = true;
-            } else if (!isQuotes) {
-                std::string token = code.substr(wordStart, wordLen);
-                tokens.push_back(token);
-                tokens.push_back("\"");
-                wordLen = 0;
-            }
-            if (isQuotes) {
-                std::string token = code.substr(wordStart, wordLen);
-                tokens.push_back(token);
-                tokens.push_back("\"");
-                isWord = false;
-            } else {
-                wordStart = i + 1;
-            }
-            isQuotes = !isQuotes;
-            continue;
-        }
 
-        if (isQuotes) {
-            wordLen++;
-        } else {
-            if (isParenthesis(code[i])) { // Parenthesis met
-                if (isWord) {
-                    std::string token = code.substr(wordStart, wordLen);
-                    tokens.push_back(token);
-                    isWord = false;
-                }
-                tokens.push_back(code.substr(i, 1));
-            }
-            else if (isDelimChar(code[i])) {  // Delim char met, i.e end of word
-                if (isWord) {
-                    std::string token = code.substr(wordStart, wordLen);
-                    tokens.push_back(token);
-                    isWord = false;
-                }
-            } else { // Ascii char met
-                if (isWord) {  // Already in word
-                    wordLen++;
-                } else {
+    for (std::size_t i = 0; i < code.size(); ++i) {
+        char c = code[i];
+        switch (_state) {
+            case LEXER_OQUOTE_OWORD: {
+                if (isParenthesis(c)) { // Parenthesis met
+                    tokens.push_back(std::string(1, c)); // Store that parenthesis in token list.
+                } else if (!isDelimChar(c)) { // Ascii met
                     wordStart = i;
-                    isWord = true;
                     wordLen = 1;
+                    db("Open word at: " << wordStart);
+                    _state = LEXER_OQUOTE_IWORD;
                 }
+                break;
+            }
+            case LEXER_OQUOTE_IWORD: {
+                if (isParenthesis(c)) { // Parenthesis met
+                    std::string token = code.substr(wordStart, wordLen);
+                    db("Saving word [" << token << "], start:" << wordStart << ", len:" << wordLen);
+                    tokens.push_back(token);
+                    tokens.push_back(std::string(1, c)); // Store that parenthesis in token list.
+                    _state = LEXER_OQUOTE_OWORD;
+                } else if (isDelimChar(c)) { 
+                    std::string token = code.substr(wordStart, wordLen);
+                    db("Saving word [" << token << "], start:" << wordStart << ", len:" << wordLen);
+                    tokens.push_back(token);
+                    _state = LEXER_OQUOTE_OWORD;
+                } else { // Ascii met
+                    wordLen++;
+                }
+                break;
+            }
+            case LEXER_IQUOTE_IWORD: {
+                    
+                break;
             }
         }
-        
     }
     return 0;
 }
