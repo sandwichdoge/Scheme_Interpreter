@@ -40,7 +40,7 @@ int Lexer::tokenize(const std::string& code, std::vector<std::string> &tokens) {
                 std::string token = code.substr(wordStart, wordLen);
                 tokens.push_back(token);
                 tokens.push_back("\"");
-                wordLen = 1;
+                wordLen = 0;
             }
             if (isQuotes) {
                 std::string token = code.substr(wordStart, wordLen);

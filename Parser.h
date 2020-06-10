@@ -11,7 +11,10 @@ public:
     int parse(SyntaxTreeNode *root);
     void setTokens(std::vector<std::string> tokens);
 private:
+    // Consume next token, put its value in out.
+    int consume(std::string& out);
     std::vector<std::string> _tokens;
+    bool _quotesOpen = false;
 };
 
 #endif
