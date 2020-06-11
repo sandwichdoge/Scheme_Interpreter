@@ -43,8 +43,8 @@ public:
     double value;
     std::size_t nodeid;
     // Make a copy of another node, recursively duplicate all children. Copy everything except symbolTable.
-    // Preserve root pointer, throw away children. preserveParent: True=copy other's parent too.
-    void copyFrom(const SyntaxTreeNode* other, bool preserveParent);
+    // Preserve root pointer, throw away children.
+    void constructLambdaNode(const SyntaxTreeNode* defNode);
 private:
     static std::size_t allocated;
     // Return root of new duplicated tree. Symbol table and is not copied because scoping.

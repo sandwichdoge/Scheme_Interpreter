@@ -59,14 +59,14 @@ TEST(AST, propagateSymbolTable) {
     delete root;
 }
 
-TEST(AST, copyFrom) {
+TEST(AST, constructLambdaNode) {
     SyntaxTreeNode *root = new SyntaxTreeNode;
     root->createChildNode();
     root->childNodes[0]->createChildNode();
     root->childNodes[0]->childNodes[0]->token = "<";
 
     SyntaxTreeNode *newRoot = new SyntaxTreeNode;
-    newRoot->copyFrom(root, true);
+    newRoot->constructLambdaNode(root);
 
     SyntaxTreeNode* child = newRoot->childNodes[0];
     SyntaxTreeNode* grandchild = newRoot->childNodes[0]->childNodes[0];

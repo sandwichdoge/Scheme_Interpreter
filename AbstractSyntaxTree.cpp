@@ -46,7 +46,7 @@ void SyntaxTreeNode::propagateSymbolTable(std::map<std::string, SyntaxTreeNode::
 }
 
 
-void SyntaxTreeNode::copyFrom(const SyntaxTreeNode* other, bool preserveParent) {
+void SyntaxTreeNode::constructLambdaNode(const SyntaxTreeNode* other) {
     cleanSyntaxTree();
     this->childNodes.clear();
     SyntaxTreeNode* newRoot = duplicate(other); // Root of duplicated tree.
@@ -59,9 +59,6 @@ void SyntaxTreeNode::copyFrom(const SyntaxTreeNode* other, bool preserveParent) 
         this->childNodes[i]->parent = this;
     }
     delete newRoot;
-    if (!preserveParent) {
-        this->parent = other->parent;
-    }
 }
 
 SyntaxTreeNode* SyntaxTreeNode::duplicate(const SyntaxTreeNode* other) {
