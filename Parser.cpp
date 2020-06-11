@@ -15,6 +15,7 @@ int Parser::parse(SyntaxTreeNode *root) {
 
     SyntaxTreeNode *node;
     if (tok == "(") {
+        if (root->keywordType == KEYWORD_UNKNOWN) root->keywordType = KEYWORD_EMPTY;
         node = root->createChildNode();
         parse(node);
     } else if (tok == ")") {
