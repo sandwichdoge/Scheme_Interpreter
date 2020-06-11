@@ -32,7 +32,6 @@ class Interpreter {
     SyntaxTreeNode *astRoot;
     bool isDelimChar(char c);
     double mapOp(const std::string &op, std::vector<double>);
-    enum KEYWORD_TYPE identifyKeyword(const std::string& keyword);
     std::string _code;
     std::vector<std::string> _tokens;
     Lexer *pLexer;

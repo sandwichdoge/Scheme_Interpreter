@@ -59,36 +59,6 @@ TEST(AST, propagateSymbolTable) {
     delete root;
 }
 
-TEST(AST, identifyKeyword) {
-    SyntaxTreeNode *root = new SyntaxTreeNode;
-    root->token = "123.33";
-    root->identifyKeyword();
-    EXPECT_EQ(root->keywordType, KEYWORD_CONSTANT);
-
-    root->token = "<";
-    root->identifyKeyword();
-    EXPECT_EQ(root->keywordType, KEYWORD_OPERATOR);
-
-    root->token = "if";
-    root->identifyKeyword();
-    EXPECT_EQ(root->keywordType, KEYWORD_CONDITIONAL);
-
-    root->token = "some_var";
-    root->identifyKeyword();
-    EXPECT_EQ(root->keywordType, KEYWORD_SYMBOL);
-
-    root->token = "define";
-    root->identifyKeyword();
-    EXPECT_EQ(root->keywordType, KEYWORD_VARIABLE_DEF);
-
-    root->token = "lambda";
-    root->identifyKeyword();
-    EXPECT_EQ(root->keywordType, KEYWORD_LAMBDA_DEF);
-
-    root->cleanSyntaxTree();
-    delete root;
-}
-
 TEST(AST, copyFrom) {
     SyntaxTreeNode *root = new SyntaxTreeNode;
     root->createChildNode();

@@ -1,6 +1,6 @@
 #include "Parser.h"
 #include "Utils/Debug.h"
-#include <iostream>
+#include "Utils/StringUtils.h"
 
 Parser::Parser() {}
 Parser::~Parser() {}
@@ -32,13 +32,13 @@ int Parser::parse(SyntaxTreeNode *root) {
         switch (root->keywordType) { 
             case KEYWORD_UNKNOWN:
                 root->token = tok;
-                root->identifyKeyword();
+                root->keywordType = identifyKeyword(tok);
                 parse(root);
                 break;
             default: // Parent has been visited before.
                 node = root->createChildNode();
                 node->token = tok;
-                node->identifyKeyword();
+                node->keywordType = identifyKeyword(tok);
                 parse(root);
                 break;
         }
@@ -52,4 +52,28 @@ int Parser::consume(std::string& out) {
     _tokens.erase(_tokens.begin());
     db("Consume token:[" << out << "]");
     return 0;
+}
+
+enum KEYWORD_TYPE Parser::identifyKeyword(const std::string& token) {
+    std::string tok = token;
+    enum KEYWORD_TYPE keywordType;
+
+    if (tok == "*" || tok == "+" || tok == "-" || tok == "/" || tok == "<" || tok == ">" || 
+        tok == "=="|| tok == "&&"|| tok == "||"|| tok == ">="|| tok == "<=") {
+        keywordType = KEYWORD_OPERATOR;
+    } else if (StringUtils::isValidNumberString(tok)) {
+        keywordType = KEYWORD_CONSTANT;
+    } else if (tok == "if") {
+        keywordType = KEYWORD_CONDITIONAL;
+    } else if (tok == "define") {
+        keywordType = KEYWORD_VARIABLE_DEF;
+    } else if (tok == "lambda") { // Function definition
+        keywordType = KEYWORD_LAMBDA_DEF;
+    } else if (tok.empty()) {
+        keywordType = KEYWORD_EMPTY;
+        db("Warning. Empty keyword");
+    } else {
+        keywordType = KEYWORD_SYMBOL;
+    } 
+    return keywordType;
 }

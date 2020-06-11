@@ -15,6 +15,7 @@ private:
     int consume(std::string& out);
     std::vector<std::string> _tokens;
     bool _quotesOpen = false;
+    enum KEYWORD_TYPE identifyKeyword(const std::string& keyword);
 };
 
 #endif

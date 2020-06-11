@@ -33,7 +33,6 @@ public:
     SyntaxTreeNode *parent;
     std::string token;
     std::vector<SyntaxTreeNode *> childNodes;
-    enum KEYWORD_TYPE identifyKeyword();
     enum KEYWORD_TYPE keywordType = KEYWORD_UNKNOWN;
     std::map<std::string, SyntaxTreeNode::Symbol> symbolTable;
     // Add symbol to all children's symbol table.
