@@ -58,6 +58,8 @@ void SyntaxTreeNode::constructLambdaNode(const SyntaxTreeNode* other) {
         this->childNodes.push_back(newRoot->childNodes[i]);
         this->childNodes[i]->parent = this;
     }
+    // All new children inherits symbol table from current node.
+    this->propagateSymbolTable(this->symbolTable);
     delete newRoot;
 }
 

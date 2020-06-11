@@ -185,8 +185,6 @@ double Evaluator::evalSymbol(SyntaxTreeNode *node) {
 
         // Copy lambda def into node. Lambda def is just a blueprint.
         node->constructLambdaNode(lambdaDef);
-        // All new children inherits symbol table from current node.
-        node->propagateSymbolTable(node->symbolTable);
     
         // Recursively replace argSymbol with real argValue for all children.
         if (node->childNodes.size() > 0 && argValue.evaluated) { // Lambda takes argument.
