@@ -120,6 +120,9 @@ double Evaluator::mapOp(const std::string &op, std::vector<double> vOperands) {
     } else if (op == ">=") {
         eassert(vOperands.size() == 2, "Error. Comparison takes 2 operands:" + op);
         ret = (double)(vOperands.at(0) >= vOperands.at(1));
+    } else if (op == "%") {
+        eassert(vOperands.size() == 2, "Error. Comparison takes 2 operands:" + op);
+        ret = (double)((long)vOperands.at(0) % (long)vOperands.at(1));
     }
     return ret;
 }
