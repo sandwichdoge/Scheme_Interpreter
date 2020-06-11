@@ -45,6 +45,16 @@ void SyntaxTreeNode::propagateSymbolTable(std::map<std::string, SyntaxTreeNode::
     }
 }
 
+void SyntaxTreeNode::propagateSymbolTable_Lambdas(std::map<std::string, SyntaxTreeNode::Symbol> table)  {
+    for (std::size_t i = 0; i < childNodes.size(); ++i) {
+        childNodes[i]->propagateSymbolTable_Lambdas(table);
+        for (auto it : table) {
+            if (it.second.type == SyntaxTreeNode::Symbol::SYMBOL_TYPE_LAMBDA) {
+                propagateSymbol(it);
+            }
+        }
+    }
+}
 
 void SyntaxTreeNode::constructLambdaNode(const SyntaxTreeNode* other) {
     cleanSyntaxTree();
@@ -59,7 +69,7 @@ void SyntaxTreeNode::constructLambdaNode(const SyntaxTreeNode* other) {
         this->childNodes[i]->parent = this;
     }
     // All new children inherits symbol table from current node.
-    this->propagateSymbolTable(this->symbolTable);
+    propagateSymbolTable_Lambdas(this->symbolTable);
     delete newRoot;
 }
 
