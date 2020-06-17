@@ -111,3 +111,30 @@ TEST(Evaluator, multiargs) {
     root->cleanSyntaxTree();
     delete root;
 }
+
+TEST(Evaluator, multiargs_fault_handle) {
+    std::string code = "(lambda sum a b c \
+        (+ a b c) \
+    ) \
+    (sum 2 3)";
+    Lexer pLexer;
+    std::vector<std::string> tokens;
+    pLexer.lex(code, tokens);
+
+    Parser pParser;
+    pParser.setTokens(tokens);
+    SyntaxTreeNode *root = new SyntaxTreeNode;
+    pParser.parse(root);
+
+    bool success = false;
+    try {
+        Evaluator pEvaluator;
+        double ret = pEvaluator.eval(root);
+    } catch (...) {
+        success = true;
+    }
+    EXPECT_EQ(success, true);
+
+    root->cleanSyntaxTree();
+    delete root;
+}
