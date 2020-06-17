@@ -16,7 +16,7 @@ private:
     double evalConditional(SyntaxTreeNode *node);
     double evalSymbol(SyntaxTreeNode* node);
     // Traverse node, swap all nodes whose token = argSymbol with val.
-    void expandVar(SyntaxTreeNode* functionNode, const std::string& argSymbol, double val);
+    void expandVar(SyntaxTreeNode* functionNode, const std::vector<std::string>& argSymbol, const std::vector<double>& vals);
     bool isEqual(double x, double y);
 };
 

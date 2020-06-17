@@ -10,7 +10,7 @@ CFLAGS+=-g -fsanitize=address -march=native -DDEBUG
 
 all: $(OBJECTS)
 	$(CXX) $(CFLAGS) test_main.cpp $(OBJECTS) -pthread -lgtest -o a.out $(INCLUDE) -L. -lschemeinterp
-	./a.out #--gtest_filter=*Parser*
+	./a.out #--gtest_filter=*Evaluator*
 
 %.o: %.cpp
 	$(CXX) -c $(CFLAGS) $< -o $@ $(INCLUDE)

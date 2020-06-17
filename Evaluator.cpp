@@ -69,7 +69,6 @@ double Evaluator::eval(SyntaxTreeNode *root) {
     // In case of something like ((2)) or ((1) (2)), i.e empty tokens, this happens.
     root->evaluated = true;
     root->value = ret;
-    db("Return:" << ret);
     return ret;
 }
 
@@ -175,23 +174,29 @@ double Evaluator::evalSymbol(SyntaxTreeNode *node) {
         db("Variable " << symbolTableEntry->second.value);
         return symbolTableEntry->second.value;
     } else { // SYMBOL_TYPE_FUNCTION
-        eassert(node->childNodes.size() <= 1, "Lambdas only takes 0-1 argument: " + node->token);
-        SyntaxTreeNode *lambdaDef = symbolTableEntry->second.funcDef->childNodes[2]; // Lambda def's syntax node
+        //eassert(node->childNodes.size() <= 1, "Lambdas only takes 0-1 argument: " + node->token);
+        std::size_t lambdaDefIndex = symbolTableEntry->second.funcDef->childNodes.size() - 1;
+        SyntaxTreeNode *lambdaDef = symbolTableEntry->second.funcDef->childNodes[lambdaDefIndex]; // Lambda def's syntax node
 
         // Try to process arguments accordingly to definition.
-        SyntaxTreeNode argValue;
-        std::string argSymbol;
+        std::vector<double> argValue;
+        std::vector<std::string> argSymbol;
         if (node->childNodes.size() > 0) { // Lambda takes argument.
-            argValue = *(node->childNodes[0]); // Real value
-            argSymbol = symbolTableEntry->second.funcDef->childNodes[1]->token; // In def
+            for (std::size_t i = 0; i < node->childNodes.size(); ++i) {
+                eassert(node->childNodes[i]->evaluated == true, "Child node has not been evaluated.");
+                argValue.push_back(node->childNodes[i]->value); // Real value
+                argSymbol.push_back(symbolTableEntry->second.funcDef->childNodes[1 + i]->token); // In def
+            }
+            // Ignore "lambda" keyword and lambda definition. So we subtract 2.
+            eassert(symbolTableEntry->second.funcDef->childNodes.size() - 2 == argSymbol.size(), "Error. Argument count mismatch in function: " + node->token);
         }
 
-        // Copy lambda def into node. Lambda def is just a blueprint.
+        // Copy lambda def into node. Lambda def is just a blueprint. This changes node's content.
         node->constructLambdaNode(lambdaDef);
     
-        // Recursively replace argSymbol with real argValue for all children.
-        if (node->childNodes.size() > 0 && argValue.evaluated) { // Lambda takes argument.
-            expandVar(node, argSymbol, argValue.value);
+        // Recursively replace argSymbol with real argValue for all children. This changes node's content.
+        if (node->childNodes.size() > 0) { // Lambda takes argument.
+            expandVar(node, argSymbol, argValue);
         }
 
         // Evaluate self
@@ -206,22 +211,28 @@ double Evaluator::evalSymbol(SyntaxTreeNode *node) {
     }
 }
 
-void Evaluator::expandVar(SyntaxTreeNode* functionNode, const std::string& argSymbol, double val) {
-    db("expand var value = " << val);
+void Evaluator::expandVar(SyntaxTreeNode* functionNode, const std::vector<std::string>& argSymbols, const std::vector<double>& vals) {
+    eassert(argSymbols.size() == vals.size(), "Error. Argument number mismatch.");
+    db("arg count:" << argSymbols.size());
     db("children count:" << functionNode->childNodes.size());
     db("parent:" << functionNode->parent);
     db("parent's token:" << functionNode->parent->token);
     db("self's token:" << functionNode->token);
     db("self's keywordType:[SYMBOL=4]" << functionNode->keywordType);
     //__asm__("int $3");
-    if (functionNode->keywordType == KEYWORD_SYMBOL && functionNode->token == argSymbol) {
-        db("Found symbol " + argSymbol);
-        functionNode->keywordType = KEYWORD_CONSTANT;
-        functionNode->evaluated = true;
-        functionNode->value = val;
+    for (std::size_t i = 0; i < argSymbols.size(); ++i) {
+        std::string argSymbol = argSymbols[i];
+        double val = vals[i];
+        if (functionNode->keywordType == KEYWORD_SYMBOL && functionNode->token == argSymbol) {
+            db("Found symbol " + argSymbol);
+            functionNode->keywordType = KEYWORD_CONSTANT;
+            functionNode->evaluated = true;
+            functionNode->value = val;
+        }
     }
+
     for (std::size_t i = 0; i < functionNode->childNodes.size(); ++i) {
-        expandVar(functionNode->childNodes[i], argSymbol, val);
+        expandVar(functionNode->childNodes[i], argSymbols, vals);
     }
 }
 

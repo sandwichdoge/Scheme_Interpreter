@@ -89,3 +89,25 @@ TEST(Evaluator, logical_ops) {
     root->cleanSyntaxTree();
     delete root;
 }
+
+TEST(Evaluator, multiargs) {
+    std::string code = "(lambda sum a b c \
+        (+ a b c) \
+    ) \
+    (sum 2 3 1)";
+    Lexer pLexer;
+    std::vector<std::string> tokens;
+    pLexer.lex(code, tokens);
+
+    Parser pParser;
+    pParser.setTokens(tokens);
+    SyntaxTreeNode *root = new SyntaxTreeNode;
+    pParser.parse(root);
+
+    Evaluator pEvaluator;
+    double ret = pEvaluator.eval(root);
+    EXPECT_FLOAT_EQ(ret, 6);
+
+    root->cleanSyntaxTree();
+    delete root;
+}

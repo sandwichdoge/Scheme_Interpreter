@@ -19,6 +19,9 @@ debug: all
 debug:
 	$(AR) crf tests/libschemeinterp.a $(OBJECTS)
 
+test:
+	cd tests && make
+
 %.o: %.cpp
 	$(CXX) -c $(CFLAGS) $< -o $@
 
