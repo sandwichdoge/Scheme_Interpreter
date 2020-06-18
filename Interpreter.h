@@ -29,7 +29,7 @@ class Interpreter {
     std::string getCode() { return _code; }
 
    private:
-    SyntaxTreeNode *astRoot;
+    SyntaxTreeNode *astRoot = nullptr;
     bool isDelimChar(char c);
     double mapOp(const std::string &op, std::vector<double>);
     std::string _code;

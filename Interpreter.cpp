@@ -5,7 +5,6 @@
 #include <vector>
 
 Interpreter::Interpreter() {
-    astRoot = new SyntaxTreeNode();
     pLexer = new Lexer();
     pParser = new Parser();
     pEvaluator = new Evaluator();
@@ -60,6 +59,11 @@ int Interpreter::checkSyntax() {
 }
 
 int Interpreter::parse() {
+    if (astRoot) {
+        astRoot->cleanSyntaxTree();
+        delete astRoot;
+    } 
+    astRoot = new SyntaxTreeNode();
     pParser->setTokens(_tokens);
     pParser->parse(astRoot);
     return 0;

@@ -6,6 +6,7 @@ Lexer::Lexer() {}
 Lexer::~Lexer() {}
 
 int Lexer::lex(const std::string& code, std::vector<std::string>& tokens) {
+    tokens.clear();
     std::string mutableCode = code;
     if (sanitize(mutableCode) < 0) {
         return -1;
