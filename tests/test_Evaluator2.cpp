@@ -138,3 +138,93 @@ TEST(Evaluator, multiargs_fault_handle) {
     root->cleanSyntaxTree();
     delete root;
 }
+
+TEST(Evaluator, multiargs2) {
+    std::string code = "(lambda sum a b\
+        (+ a b)\
+    )\
+    (lambda dec a b\
+        (- a b)\
+    ) \
+    (sum 5 (dec 1 1))";
+    Lexer pLexer;
+    std::vector<std::string> tokens;
+    pLexer.lex(code, tokens);
+
+    Parser pParser;
+    pParser.setTokens(tokens);
+    SyntaxTreeNode *root = new SyntaxTreeNode;
+    pParser.parse(root);
+
+    Evaluator pEvaluator;
+    double ret = pEvaluator.eval(root);
+    EXPECT_FLOAT_EQ(ret, 5);
+
+    root->cleanSyntaxTree();
+    delete root;
+}
+
+TEST(Evaluator, multiargs3) {
+    std::string code = "(lambda sum a b\
+        (+ a b)\
+    )\
+    (lambda diff a b\
+        (\
+            (define x (- a b))\
+            (if (> x 0)\
+                x\
+                (- 0 x)\
+            )\
+        )\
+    )\
+    (sum 5 (diff 1 2))";
+    Lexer pLexer;
+    std::vector<std::string> tokens;
+    pLexer.lex(code, tokens);
+
+    Parser pParser;
+    pParser.setTokens(tokens);
+    SyntaxTreeNode *root = new SyntaxTreeNode;
+    pParser.parse(root);
+
+    Evaluator pEvaluator;
+    double ret = pEvaluator.eval(root);
+    EXPECT_FLOAT_EQ(ret, 6);
+
+    root->cleanSyntaxTree();
+    delete root;
+}
+
+TEST(Evaluator, multiargs4) {
+    std::string code = "(lambda sum a b\
+        (+ a b)\
+    )\
+    (lambda abs n\
+        (if (> n 0)\
+            n\
+            (- 0 n)\
+        )\
+    )\
+    (lambda diff a b\
+        (\
+            (define x (- a b))\
+            (abs x)\
+        )\
+    )\
+    (sum 5 (diff 1 4))";
+    Lexer pLexer;
+    std::vector<std::string> tokens;
+    pLexer.lex(code, tokens);
+
+    Parser pParser;
+    pParser.setTokens(tokens);
+    SyntaxTreeNode *root = new SyntaxTreeNode;
+    pParser.parse(root);
+
+    Evaluator pEvaluator;
+    double ret = pEvaluator.eval(root);
+    EXPECT_FLOAT_EQ(ret, 8);
+
+    root->cleanSyntaxTree();
+    delete root;
+}
