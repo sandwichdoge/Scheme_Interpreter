@@ -82,7 +82,7 @@ TEST(Evaluator, lambda_recursion) {
 "    (- a 1)\n"
 ")\n"
 "(lambda (factorial) (n)\n"
-"    (if (== n 1)\n"
+"    (if (<= n 1)\n"
 "        (1)\n"
 "        (*\n"
 "            (factorial (dec n))\n"
@@ -128,6 +128,31 @@ TEST(Evaluator, lambda_zeroarg) {
     Evaluator pEvaluator;
     double ret = pEvaluator.eval(root);
     EXPECT_FLOAT_EQ(ret, 1);
+
+    root->cleanSyntaxTree();
+    delete root;
+}
+
+TEST(Evaluator, fibonacci) {
+    std::string code = "(lambda fibo n\
+    (if (< n 2) \
+        n\
+        (+ (fibo (- n 1)) (fibo (- n 2)))\
+    )\
+    )\
+    (fibo 9)";
+    Lexer pLexer;
+    std::vector<std::string> tokens;
+    pLexer.lex(code, tokens);
+
+    Parser pParser;
+    pParser.setTokens(tokens);
+    SyntaxTreeNode *root = new SyntaxTreeNode;
+    pParser.parse(root);
+
+    Evaluator pEvaluator;
+    double ret = pEvaluator.eval(root);
+    EXPECT_FLOAT_EQ(ret, 34);
 
     root->cleanSyntaxTree();
     delete root;
