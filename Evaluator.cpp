@@ -238,5 +238,5 @@ void Evaluator::expandVar(SyntaxTreeNode* functionNode, const std::vector<std::s
 
 #define EPSILON 0.001
 bool Evaluator::isEqual(double x, double y) {
-    return (abs(x - y) < EPSILON);
+    return (fabs(x - y) < EPSILON);
 }
