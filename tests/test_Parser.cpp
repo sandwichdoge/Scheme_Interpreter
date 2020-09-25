@@ -1,6 +1,6 @@
-#include "../Parser.h"
-#include "../Lexer.h"
 #include "../AbstractSyntaxTree.h"
+#include "../Lexer.h"
+#include "../Parser.h"
 #include "gtest/gtest.h"
 
 TEST(Parser, Basic) {
@@ -20,23 +20,24 @@ TEST(Parser, Basic) {
 }
 
 TEST(Parser, ParseRecursion) {
-    std::string code = "(lambda inc a\n"
-    "    (+ 1 a)\n"
-    ")\n"
-    "(lambda (dec) (a)\n"
-    "    (- a 1)\n"
-    ")\n"
-    "(lambda (factorial) (n)\n"
-    "    (if (== n 1)\n"
-    "        (1)\n"
-    "        (*\n"
-    "            (factorial (dec n))\n"
-    "            (n)\n"
-    "        )\n"
-    "    )\n"
-    ")\n"
-    "\n"
-    "(factorial (inc 7))";
+    std::string code =
+        "(lambda inc a\n"
+        "    (+ 1 a)\n"
+        ")\n"
+        "(lambda (dec) (a)\n"
+        "    (- a 1)\n"
+        ")\n"
+        "(lambda (factorial) (n)\n"
+        "    (if (== n 1)\n"
+        "        (1)\n"
+        "        (*\n"
+        "            (factorial (dec n))\n"
+        "            (n)\n"
+        "        )\n"
+        "    )\n"
+        ")\n"
+        "\n"
+        "(factorial (inc 7))";
     Lexer pLexer;
     std::vector<std::string> tokens;
     pLexer.lex(code, tokens);

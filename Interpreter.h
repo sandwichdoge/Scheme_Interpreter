@@ -2,11 +2,12 @@
 #define INTERPRETER_H_
 #include <string>
 #include <vector>
-#include "SyntaxChecker.h"
+
+#include "AbstractSyntaxTree.h"
+#include "Evaluator.h"
 #include "Lexer.h"
 #include "Parser.h"
-#include "Evaluator.h"
-#include "AbstractSyntaxTree.h"
+#include "SyntaxChecker.h"
 
 class Interpreter {
    public:

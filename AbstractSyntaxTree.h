@@ -1,20 +1,29 @@
 #ifndef INCLUDE_AST_H
 #define INCLUDE_AST_H
-#include <vector>
 #include <map>
 #include <string>
+#include <vector>
 
-enum KEYWORD_TYPE {KEYWORD_UNKNOWN, KEYWORD_OPERATOR, KEYWORD_CONSTANT, KEYWORD_CONDITIONAL, 
-    KEYWORD_SYMBOL, KEYWORD_LAMBDA_DEF, KEYWORD_VARIABLE_DEF, KEYWORD_EMPTY, KEYWORD_STRING};
+enum KEYWORD_TYPE {
+    KEYWORD_UNKNOWN,
+    KEYWORD_OPERATOR,
+    KEYWORD_CONSTANT,
+    KEYWORD_CONDITIONAL,
+    KEYWORD_SYMBOL,
+    KEYWORD_LAMBDA_DEF,
+    KEYWORD_VARIABLE_DEF,
+    KEYWORD_EMPTY,
+    KEYWORD_STRING
+};
 
 class SyntaxTreeNode {
-public:
+   public:
     class Symbol {
-    public:
-        enum SYMBOL_TYPE {SYMBOL_TYPE_VAR, SYMBOL_TYPE_LAMBDA};
+       public:
+        enum SYMBOL_TYPE { SYMBOL_TYPE_VAR, SYMBOL_TYPE_LAMBDA };
         enum SYMBOL_TYPE type;
         double value = 0;
-        SyntaxTreeNode* funcDef = nullptr; // Node containing definition of function.
+        SyntaxTreeNode* funcDef = nullptr;  // Node containing definition of function.
         Symbol& operator=(const Symbol& other) {
             if (this != &other) {
                 this->type = other.type;
@@ -26,13 +35,13 @@ public:
     SyntaxTreeNode();
     ~SyntaxTreeNode();
     // Create a child AST node.
-    SyntaxTreeNode *createChildNode();
+    SyntaxTreeNode* createChildNode();
     // Clean up all children.
     void cleanSyntaxTree();
 
-    SyntaxTreeNode *parent;
+    SyntaxTreeNode* parent;
     std::string token;
-    std::vector<SyntaxTreeNode *> childNodes;
+    std::vector<SyntaxTreeNode*> childNodes;
     enum KEYWORD_TYPE keywordType = KEYWORD_UNKNOWN;
     std::map<std::string, SyntaxTreeNode::Symbol> symbolTable;
     // Add symbol to all children's symbol table.
@@ -46,7 +55,8 @@ public:
     // Make a copy of another node, recursively duplicate all children. Copy everything except symbolTable.
     // Preserve root pointer, throw away children.
     void constructLambdaNode(const SyntaxTreeNode* defNode);
-private:
+
+   private:
     static std::size_t allocated;
     // Return root of new duplicated tree. Symbol table and is not copied because scoping.
     // Must cleanSyntaxTree() before calling this.

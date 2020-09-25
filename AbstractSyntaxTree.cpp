@@ -1,6 +1,7 @@
 #include "AbstractSyntaxTree.h"
-#include "Utils/StringUtils.h"
+
 #include "Utils/Debug.h"
+#include "Utils/StringUtils.h"
 
 std::size_t SyntaxTreeNode::allocated = 0;
 
@@ -9,11 +10,10 @@ SyntaxTreeNode::SyntaxTreeNode() {
     this->nodeid = allocated;
 }
 
-SyntaxTreeNode::~SyntaxTreeNode() {
-}
+SyntaxTreeNode::~SyntaxTreeNode() {}
 
 SyntaxTreeNode* SyntaxTreeNode::createChildNode() {
-    SyntaxTreeNode *ret = new SyntaxTreeNode;
+    SyntaxTreeNode* ret = new SyntaxTreeNode;
     ret->parent = this;
     ret->symbolTable = this->symbolTable;
     childNodes.push_back(ret);
@@ -45,7 +45,7 @@ void SyntaxTreeNode::propagateSymbolTable(std::map<std::string, SyntaxTreeNode::
     }
 }
 
-void SyntaxTreeNode::propagateSymbolTable_Lambdas(std::map<std::string, SyntaxTreeNode::Symbol> table)  {
+void SyntaxTreeNode::propagateSymbolTable_Lambdas(std::map<std::string, SyntaxTreeNode::Symbol> table) {
     for (std::size_t i = 0; i < childNodes.size(); ++i) {
         childNodes[i]->propagateSymbolTable_Lambdas(table);
         for (auto it : table) {
@@ -59,7 +59,7 @@ void SyntaxTreeNode::propagateSymbolTable_Lambdas(std::map<std::string, SyntaxTr
 void SyntaxTreeNode::constructLambdaNode(const SyntaxTreeNode* other) {
     cleanSyntaxTree();
     this->childNodes.clear();
-    SyntaxTreeNode* newRoot = duplicate(other); // Root of duplicated tree.
+    SyntaxTreeNode* newRoot = duplicate(other);  // Root of duplicated tree.
     this->keywordType = other->keywordType;
     this->token = other->token;
     this->value = other->value;
@@ -74,7 +74,7 @@ void SyntaxTreeNode::constructLambdaNode(const SyntaxTreeNode* other) {
 }
 
 SyntaxTreeNode* SyntaxTreeNode::duplicate(const SyntaxTreeNode* other) {
-    SyntaxTreeNode *newNode = new SyntaxTreeNode;
+    SyntaxTreeNode* newNode = new SyntaxTreeNode;
     newNode->keywordType = other->keywordType;
     newNode->token = other->token;
     newNode->value = other->value;

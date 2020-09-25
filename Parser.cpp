@@ -1,19 +1,18 @@
 #include "Parser.h"
+
 #include "Utils/Debug.h"
 #include "Utils/StringUtils.h"
 
 Parser::Parser() {}
 Parser::~Parser() {}
 
-void Parser::setTokens(std::vector<std::string> tokens) {
-    _tokens = tokens;
-}
+void Parser::setTokens(std::vector<std::string> tokens) { _tokens = tokens; }
 
-int Parser::parse(SyntaxTreeNode *root) {
+int Parser::parse(SyntaxTreeNode* root) {
     std::string tok;
-    if (consume(tok) < 0) return 0; // No more tokens
+    if (consume(tok) < 0) return 0;  // No more tokens
 
-    SyntaxTreeNode *node;
+    SyntaxTreeNode* node;
     if (tok == "(") {
         if (root->keywordType == KEYWORD_UNKNOWN) root->keywordType = KEYWORD_EMPTY;
         node = root->createChildNode();
@@ -30,13 +29,13 @@ int Parser::parse(SyntaxTreeNode *root) {
         _quotesOpen = !_quotesOpen;
         parse(root);
     } else {
-        switch (root->keywordType) { 
+        switch (root->keywordType) {
             case KEYWORD_UNKNOWN:
                 root->token = tok;
                 root->keywordType = identifyKeyword(tok);
                 parse(root);
                 break;
-            default: // Parent has been visited before.
+            default:  // Parent has been visited before.
                 node = root->createChildNode();
                 node->token = tok;
                 node->keywordType = identifyKeyword(tok);
@@ -59,8 +58,8 @@ enum KEYWORD_TYPE Parser::identifyKeyword(const std::string& token) {
     std::string tok = token;
     enum KEYWORD_TYPE keywordType;
 
-    if (tok == "*" || tok == "+" || tok == "-" || tok == "/" || tok == "<" || tok == ">" || 
-        tok == "=="|| tok == "&&"|| tok == "||"|| tok == ">="|| tok == "<=") {
+    if (tok == "*" || tok == "+" || tok == "-" || tok == "/" || tok == "<" || tok == ">" || tok == "==" ||
+        tok == "&&" || tok == "||" || tok == ">=" || tok == "<=") {
         keywordType = KEYWORD_OPERATOR;
     } else if (StringUtils::isValidNumberString(tok)) {
         keywordType = KEYWORD_CONSTANT;
@@ -68,13 +67,13 @@ enum KEYWORD_TYPE Parser::identifyKeyword(const std::string& token) {
         keywordType = KEYWORD_CONDITIONAL;
     } else if (tok == "define") {
         keywordType = KEYWORD_VARIABLE_DEF;
-    } else if (tok == "lambda") { // Function definition
+    } else if (tok == "lambda") {  // Function definition
         keywordType = KEYWORD_LAMBDA_DEF;
     } else if (tok.empty()) {
         keywordType = KEYWORD_EMPTY;
         db("Warning. Empty keyword");
     } else {
         keywordType = KEYWORD_SYMBOL;
-    } 
+    }
     return keywordType;
 }

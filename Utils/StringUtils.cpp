@@ -41,7 +41,7 @@ bool StringUtils::stringToDouble(std::string s, double& out) {
 
 bool StringUtils::isValidNumberString(const std::string& s) {
     if (s.empty()) return false;
-    
+
     int start = 0;
     if (s[0] == '-' || s[0] == '+') start++;
 

@@ -1,13 +1,11 @@
-#include "gtest/gtest.h"
 #include "../AbstractSyntaxTree.h"
+#include "gtest/gtest.h"
 
-TEST(AST, Sanity) {
-    EXPECT_EQ(1, 1);
-}
+TEST(AST, Sanity) { EXPECT_EQ(1, 1); }
 
 TEST(AST, SingleConstruction) {
-    SyntaxTreeNode *root = new SyntaxTreeNode;
-    SyntaxTreeNode *child = nullptr;
+    SyntaxTreeNode* root = new SyntaxTreeNode;
+    SyntaxTreeNode* child = nullptr;
     child = root->createChildNode();
     EXPECT_EQ(root->childNodes.size(), 1);
     EXPECT_NE(child, nullptr);
@@ -17,7 +15,7 @@ TEST(AST, SingleConstruction) {
 }
 
 TEST(AST, propagateSymbol) {
-    SyntaxTreeNode *root = new SyntaxTreeNode;
+    SyntaxTreeNode* root = new SyntaxTreeNode;
     root->createChildNode();
     root->childNodes[0]->createChildNode();
     SyntaxTreeNode::Symbol sym;
@@ -36,7 +34,7 @@ TEST(AST, propagateSymbol) {
 }
 
 TEST(AST, propagateSymbolTable) {
-    SyntaxTreeNode *root = new SyntaxTreeNode;
+    SyntaxTreeNode* root = new SyntaxTreeNode;
     root->createChildNode();
     root->childNodes[0]->createChildNode();
     SyntaxTreeNode::Symbol sym;
@@ -60,12 +58,12 @@ TEST(AST, propagateSymbolTable) {
 }
 
 TEST(AST, constructLambdaNode) {
-    SyntaxTreeNode *root = new SyntaxTreeNode;
+    SyntaxTreeNode* root = new SyntaxTreeNode;
     root->createChildNode();
     root->childNodes[0]->createChildNode();
     root->childNodes[0]->childNodes[0]->token = "<";
 
-    SyntaxTreeNode *newRoot = new SyntaxTreeNode;
+    SyntaxTreeNode* newRoot = new SyntaxTreeNode;
     newRoot->constructLambdaNode(root);
 
     SyntaxTreeNode* child = newRoot->childNodes[0];

@@ -1,4 +1,5 @@
 #include "AssertError.h"
+
 #include <iostream>
 
 void AssertError::assert(bool test, const std::string& errMsg) {

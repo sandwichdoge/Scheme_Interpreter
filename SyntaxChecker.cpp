@@ -1,11 +1,12 @@
 #include "SyntaxChecker.h"
-#include <vector>
+
+#include <future>
 #include <iostream>
 #include <thread>
-#include <future>
+#include <vector>
 
-SyntaxChecker::SyntaxChecker(){}
-SyntaxChecker::~SyntaxChecker(){}
+SyntaxChecker::SyntaxChecker() {}
+SyntaxChecker::~SyntaxChecker() {}
 
 int SyntaxChecker::checkSyntax(const std::string& code) {
     auto futureParens = std::async(&SyntaxChecker::checkBalancedParens, this, code);

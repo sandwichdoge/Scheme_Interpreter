@@ -4,12 +4,11 @@
 #include <string>
 
 class AssertError {
-    public:
+   public:
     static void assert(bool, const std::string& errMsg);
 };
 
-#define eassert(b, s) { \
-    AssertError::assert(b, s); \
-}
+#define eassert(b, s) \
+    { AssertError::assert(b, s); }
 
 #endif

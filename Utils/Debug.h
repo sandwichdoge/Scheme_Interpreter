@@ -3,18 +3,20 @@
 #include <iostream>
 
 #ifdef DEBUG
-#define db(str) { \
-                    std::cout << __FILE__ << ":" << __LINE__ << "\t" << str << "\n"; \
-                }
-    #define print_vector(v) { \
-        for (auto _db_v_it : v) { \
+#define db(str) \
+    { std::cout << __FILE__ << ":" << __LINE__ << "\t" << str << "\n"; }
+#define print_vector(v)                   \
+    {                                     \
+        for (auto _db_v_it : v) {         \
             std::cout << _db_v_it << ","; \
-        } \
-        std::cout << "\n"; \
+        }                                 \
+        std::cout << "\n";                \
     }
 #else
-#define db(str) {}
-#define print_vector(v) {}
+#define db(str) \
+    {}
+#define print_vector(v) \
+    {}
 #endif
 
 #endif

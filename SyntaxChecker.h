@@ -5,11 +5,12 @@
 
 // Syntax checker for Lisp
 class SyntaxChecker {
-public:
+   public:
     SyntaxChecker();
     ~SyntaxChecker();
     int checkSyntax(const std::string& code);
-private:
+
+   private:
     int checkBalancedParens(const std::string& code);
     int checkBalancedQuotes(const std::string& code);
 };
