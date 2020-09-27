@@ -15,7 +15,7 @@ TEST(Evaluator, basic) {
     pParser.parse(root);
 
     Evaluator pEvaluator;
-    double ret = pEvaluator.eval(root);
+    double ret = pEvaluator.eval(root)._doubledata;
     EXPECT_FLOAT_EQ(ret, 12);
 
     root->cleanSyntaxTree();
@@ -41,7 +41,7 @@ TEST(Evaluator, if) {
     pParser.parse(root);
 
     Evaluator pEvaluator;
-    double ret = pEvaluator.eval(root);
+    double ret = pEvaluator.eval(root)._doubledata;
     EXPECT_FLOAT_EQ(ret, 555);
 
     root->cleanSyntaxTree();
@@ -67,7 +67,7 @@ TEST(Evaluator, if2) {
     pParser.parse(root);
 
     Evaluator pEvaluator;
-    double ret = pEvaluator.eval(root);
+    double ret = pEvaluator.eval(root)._doubledata;
     EXPECT_FLOAT_EQ(ret, 10);
 
     root->cleanSyntaxTree();
@@ -102,7 +102,7 @@ TEST(Evaluator, lambda_recursion) {
     pParser.parse(root);
 
     Evaluator pEvaluator;
-    double ret = pEvaluator.eval(root);
+    double ret = pEvaluator.eval(root)._doubledata;
     EXPECT_FLOAT_EQ(ret, 40320);
 
     root->cleanSyntaxTree();
@@ -126,7 +126,7 @@ TEST(Evaluator, lambda_zeroarg) {
     pParser.parse(root);
 
     Evaluator pEvaluator;
-    double ret = pEvaluator.eval(root);
+    double ret = pEvaluator.eval(root)._doubledata;
     EXPECT_FLOAT_EQ(ret, 1);
 
     root->cleanSyntaxTree();
@@ -151,7 +151,7 @@ TEST(Evaluator, fibonacci) {
     pParser.parse(root);
 
     Evaluator pEvaluator;
-    double ret = pEvaluator.eval(root);
+    double ret = pEvaluator.eval(root)._doubledata;
     EXPECT_FLOAT_EQ(ret, 34);
 
     root->cleanSyntaxTree();

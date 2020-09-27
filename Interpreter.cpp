@@ -70,7 +70,7 @@ int Interpreter::parse() {
 }
 
 double Interpreter::eval() {
-    return pEvaluator->eval(astRoot);
+    return pEvaluator->eval(astRoot)._doubledata;
 }
 
 int Interpreter::run(double& result) {

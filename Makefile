@@ -1,14 +1,16 @@
 OBJECTS=main.o \
 		Utils/StringUtils.o \
 		Utils/AssertError.o \
+		Utils/FloatUtils.o \
 		Interpreter.o \
 		SyntaxChecker.o \
 		Lexer.o \
 		AbstractSyntaxTree.o \
 		Parser.o \
-		Evaluator.o 
+		Evaluator.o \
+		DataType.o
 
-CFLAGS += -std=c++11 -march=native -Wall -Wpedantic
+CFLAGS += -std=c++11 -march=native -Wall -Wpedantic -Wno-switch
 
 all: $(OBJECTS)
 	$(CXX) $(CFLAGS) $^ -o interpreter.out -pthread
@@ -28,3 +30,4 @@ test:
 clean:
 	rm -f *.o *.out *.a
 	rm -f Utils/*.o Utils/*.a
+	rm -f tests/*.o

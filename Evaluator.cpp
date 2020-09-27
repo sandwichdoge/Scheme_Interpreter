@@ -6,16 +6,17 @@
 #include "Utils/AssertError.h"
 #include "Utils/Debug.h"
 #include "Utils/StringUtils.h"
+#include "Utils/FloatUtils.h"
 
 Evaluator::Evaluator() {}
 
 Evaluator::~Evaluator() {}
 
-double Evaluator::eval(SyntaxTreeNode *root) {
+DataType Evaluator::eval(SyntaxTreeNode *root) {
     // Traverse and eval all children.
     db("eval:" << root->token);
     db("Child nodes count:" << root->childNodes.size());
-    double ret = 0;
+    DataType ret;
 
     switch (root->keywordType) {
         case (KEYWORD_CONDITIONAL): {
@@ -34,8 +35,10 @@ double Evaluator::eval(SyntaxTreeNode *root) {
             if (root->evaluated) {
                 ret = root->value;
             } else {
-                bool tmp = StringUtils::stringToDouble(root->token, ret);
+                bool tmp = StringUtils::stringToDouble(root->token, ret._doubledata);
+                ret.dataType = DataType::DATA_TYPE_DOUBLE;
                 root->evaluated = true;
+                root->value = ret;
                 eassert(tmp == true, "Error. Invalid number:" + root->token);
             }
             break;
@@ -72,8 +75,8 @@ double Evaluator::eval(SyntaxTreeNode *root) {
     return ret;
 }
 
-double Evaluator::evalOp(SyntaxTreeNode *node) {
-    std::vector<double> results;  // Evaluted results of all children.
+DataType Evaluator::evalOp(SyntaxTreeNode *node) {
+    std::vector<DataType> results;  // Evaluted results of all children.
     for (std::size_t i = 0; i < node->childNodes.size(); ++i) {
         eassert(node->childNodes[i]->evaluated == true, "Error. Failed to evaluate operator, children not evaluted.");
         results.push_back(node->childNodes[i]->value);
@@ -81,11 +84,12 @@ double Evaluator::evalOp(SyntaxTreeNode *node) {
     return mapOp(node->token, results);
 }
 
-double Evaluator::mapOp(const std::string &op, std::vector<double> vOperands) {
-    double ret = 0;
+DataType Evaluator::mapOp(const std::string &op, std::vector<DataType> vOperands) {
+    DataType ret;
     if (op == "+") {
-        for (std::size_t i = 0; i < vOperands.size(); ++i) {
-            ret += vOperands.at(i);
+        ret = vOperands.at(0);
+        for (std::size_t i = 1; i < vOperands.size(); ++i) {
+            ret = ret + vOperands.at(i);
         }
     } else if (op == "-") {
         eassert(vOperands.size() == 2, "Error. Substraction takes 2 operands.");
@@ -93,45 +97,49 @@ double Evaluator::mapOp(const std::string &op, std::vector<double> vOperands) {
     } else if (op == "*") {
         ret = vOperands.at(0);
         for (std::size_t i = 1; i < vOperands.size(); ++i) {
-            ret *= vOperands.at(i);
+            ret = ret * vOperands.at(i);
         }
     } else if (op == "/") {
         eassert(vOperands.size() == 2, "Error. Division takes 2 operands:" + op);
         ret = vOperands.at(0) / vOperands.at(1);
     } else if (op == "<") {
         eassert(vOperands.size() == 2, "Error. Comparison takes 2 operands:" + op);
-        ret = (double)(vOperands.at(0) < vOperands.at(1));
+        ret = (vOperands.at(0) < vOperands.at(1));
     } else if (op == ">") {
         eassert(vOperands.size() == 2, "Error. Comparison takes 2 operands:" + op);
-        ret = (double)(vOperands.at(0) > vOperands.at(1));
+        ret = (vOperands.at(0) > vOperands.at(1));
     } else if (op == "==") {
         eassert(vOperands.size() == 2, "Error. Comparison takes 2 operands:" + op);
-        ret = (double)(vOperands.at(0) == vOperands.at(1));
+        ret = (vOperands.at(0) == vOperands.at(1));
     } else if (op == "&&") {
         eassert(vOperands.size() == 2, "Error. Comparison takes 2 operands:" + op);
-        ret = (double)(vOperands.at(0) && vOperands.at(1));
+        ret = (vOperands.at(0) && vOperands.at(1));
     } else if (op == "||") {
         eassert(vOperands.size() == 2, "Error. Comparison takes 2 operands:" + op);
-        ret = (double)(vOperands.at(0) || vOperands.at(1));
+        ret = (vOperands.at(0) || vOperands.at(1));
     } else if (op == "<=") {
         eassert(vOperands.size() == 2, "Error. Comparison takes 2 operands:" + op);
-        ret = (double)(vOperands.at(0) <= vOperands.at(1));
+        ret = (vOperands.at(0) <= vOperands.at(1));
     } else if (op == ">=") {
         eassert(vOperands.size() == 2, "Error. Comparison takes 2 operands:" + op);
-        ret = (double)(vOperands.at(0) >= vOperands.at(1));
-    } else if (op == "%") {
+        ret = (vOperands.at(0) >= vOperands.at(1));
+    } else if (op == "!=") {
         eassert(vOperands.size() == 2, "Error. Comparison takes 2 operands:" + op);
-        ret = (double)((long)vOperands.at(0) % (long)vOperands.at(1));
+        ret = (vOperands.at(0) != vOperands.at(1));
+    } else if (op == "%") {
+        eassert(vOperands.size() == 2, "Error. Modulo takes 2 operands:" + op);
+        long mod = ((long)vOperands.at(0)._doubledata % (long)vOperands.at(1)._doubledata);
+        ret = static_cast<double>(mod);
     }
     return ret;
 }
 
-double Evaluator::evalConditional(SyntaxTreeNode *node) {
+DataType Evaluator::evalConditional(SyntaxTreeNode *node) {
     eassert((node->childNodes.size() == 2 || node->childNodes.size() == 3), "Error. Conditional takes 2-3 arguments.");
 
-    double test = eval(node->childNodes[0]);
-    double ret = 0;
-    if (!isEqual(test, 0)) {
+    DataType test = eval(node->childNodes[0]);
+    DataType ret;
+    if (!(test == 0.0f)) {
         ret = eval(node->childNodes[1]);
     } else if (node->childNodes.size() > 2) {
         ret = eval(node->childNodes[2]);
@@ -142,7 +150,7 @@ double Evaluator::evalConditional(SyntaxTreeNode *node) {
 // Eval "define" token. When a variable is defined, it must be evaluable.
 void Evaluator::evalVarDef(SyntaxTreeNode *node) {
     eassert(node->childNodes.size() == 2, "Error. Variable def only takes 2 arguments." + node->token);
-    double val = eval(node->childNodes[1]);
+    DataType val = eval(node->childNodes[1]);
     std::string id = node->childNodes[0]->token;
 
     SyntaxTreeNode::Symbol sym;
@@ -164,7 +172,7 @@ void Evaluator::evalLambdaDef(SyntaxTreeNode *node) {
     node->parent->propagateSymbol({id, sym});
 }
 
-double Evaluator::evalSymbol(SyntaxTreeNode *node) {
+DataType Evaluator::evalSymbol(SyntaxTreeNode *node) {
     // Look up node's symbolTable, get value
     db("NodeID " << node->nodeid);
     db("symbolTable size:" << node->symbolTable.size());
@@ -180,7 +188,7 @@ double Evaluator::evalSymbol(SyntaxTreeNode *node) {
             symbolTableEntry->second.funcDef->childNodes[lambdaDefIndex];  // Lambda def's syntax node
 
         // Try to process arguments accordingly to definition.
-        std::vector<double> argValue;
+        std::vector<DataType> argValue;
         std::vector<std::string> argSymbol;
         if (node->childNodes.size() > 0) {  // Lambda takes argument.
             for (std::size_t i = 0; i < node->childNodes.size(); ++i) {
@@ -202,8 +210,7 @@ double Evaluator::evalSymbol(SyntaxTreeNode *node) {
         }
 
         // Evaluate self
-        db("Evaluating self");
-        double ret = eval(node);
+        DataType ret = eval(node);
 
         // Clean up
         node->cleanSyntaxTree();
@@ -214,7 +221,7 @@ double Evaluator::evalSymbol(SyntaxTreeNode *node) {
 }
 
 void Evaluator::expandVar(SyntaxTreeNode *functionNode, const std::vector<std::string> &argSymbols,
-                          const std::vector<double> &vals) {
+                          const std::vector<DataType> &vals) {
     eassert(argSymbols.size() == vals.size(), "Error. Argument number mismatch.");
     db("arg count:" << argSymbols.size());
     db("children count:" << functionNode->childNodes.size());
@@ -225,7 +232,7 @@ void Evaluator::expandVar(SyntaxTreeNode *functionNode, const std::vector<std::s
     //__asm__("int $3");
     for (std::size_t i = 0; i < argSymbols.size(); ++i) {
         std::string argSymbol = argSymbols[i];
-        double val = vals[i];
+        DataType val = vals[i];
         if (functionNode->keywordType == KEYWORD_SYMBOL && functionNode->token == argSymbol) {
             db("Found symbol " + argSymbol);
             functionNode->keywordType = KEYWORD_CONSTANT;
@@ -237,9 +244,4 @@ void Evaluator::expandVar(SyntaxTreeNode *functionNode, const std::vector<std::s
     for (std::size_t i = 0; i < functionNode->childNodes.size(); ++i) {
         expandVar(functionNode->childNodes[i], argSymbols, vals);
     }
-}
-
-#define EPSILON 0.001
-bool Evaluator::isEqual(double x, double y) {
-    return (fabs(x - y) < EPSILON);
 }

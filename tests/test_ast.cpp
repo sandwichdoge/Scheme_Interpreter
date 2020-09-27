@@ -51,7 +51,7 @@ TEST(AST, propagateSymbolTable) {
     EXPECT_EQ(child->symbolTable.size(), 1);
     EXPECT_EQ(grandchild->symbolTable.size(), 1);
     EXPECT_FLOAT_EQ(grandchild->symbolTable["abc"].type, SyntaxTreeNode::Symbol::SYMBOL_TYPE_VAR);
-    EXPECT_FLOAT_EQ(grandchild->symbolTable["abc"].value, 123.0);
+    EXPECT_FLOAT_EQ(grandchild->symbolTable["abc"].value._doubledata, 123.0);
 
     root->cleanSyntaxTree();
     delete root;

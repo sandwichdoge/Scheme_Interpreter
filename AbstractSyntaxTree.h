@@ -3,6 +3,7 @@
 #include <map>
 #include <string>
 #include <vector>
+#include "DataType.h"
 
 enum KEYWORD_TYPE {
     KEYWORD_UNKNOWN,
@@ -22,7 +23,7 @@ class SyntaxTreeNode {
        public:
         enum SYMBOL_TYPE { SYMBOL_TYPE_VAR, SYMBOL_TYPE_LAMBDA };
         enum SYMBOL_TYPE type;
-        double value = 0;
+        DataType value;
         SyntaxTreeNode* funcDef = nullptr;  // Node containing definition of function.
         Symbol& operator=(const Symbol& other) {
             if (this != &other) {
@@ -50,7 +51,7 @@ class SyntaxTreeNode {
     void propagateSymbolTable_Lambdas(std::map<std::string, SyntaxTreeNode::Symbol> table);
 
     bool evaluated = false;
-    double value;
+    DataType value;
     std::size_t nodeid;
     // Make a copy of another node, recursively duplicate all children. Copy everything except symbolTable.
     // Preserve root pointer, throw away children.

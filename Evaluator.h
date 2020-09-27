@@ -8,19 +8,18 @@ class Evaluator {
    public:
     Evaluator();
     ~Evaluator();
-    double eval(SyntaxTreeNode *root);
+    DataType eval(SyntaxTreeNode *root);
 
    private:
-    double mapOp(const std::string &op, std::vector<double> vOperands);
-    double evalOp(SyntaxTreeNode *node);
+    DataType mapOp(const std::string &op, std::vector<DataType> vOperands);
+    DataType evalOp(SyntaxTreeNode *node);
     void evalVarDef(SyntaxTreeNode *node);
     void evalLambdaDef(SyntaxTreeNode *node);
-    double evalConditional(SyntaxTreeNode *node);
-    double evalSymbol(SyntaxTreeNode *node);
+    DataType evalConditional(SyntaxTreeNode *node);
+    DataType evalSymbol(SyntaxTreeNode *node);
     // Traverse node, swap all nodes whose token = argSymbol with val.
     void expandVar(SyntaxTreeNode *functionNode, const std::vector<std::string> &argSymbol,
-                   const std::vector<double> &vals);
-    bool isEqual(double x, double y);
+                   const std::vector<DataType> &vals);
 };
 
 #endif

@@ -19,7 +19,7 @@ TEST(Evaluator, nothing) {
     pParser.parse(root);
 
     Evaluator pEvaluator;
-    double ret = pEvaluator.eval(root);
+    double ret = pEvaluator.eval(root)._doubledata;
     EXPECT_FLOAT_EQ(ret, 0);
 
     root->cleanSyntaxTree();
@@ -38,7 +38,7 @@ TEST(Evaluator, nothing2) {
     pParser.parse(root);
 
     Evaluator pEvaluator;
-    double ret = pEvaluator.eval(root);
+    double ret = pEvaluator.eval(root)._doubledata;
     EXPECT_FLOAT_EQ(ret, 0);
 
     root->cleanSyntaxTree();
@@ -59,7 +59,7 @@ TEST(Evaluator, fault) {
     bool testSuccess = false;
     Evaluator pEvaluator;
     try {
-        double ret = pEvaluator.eval(root);
+        double ret = pEvaluator.eval(root)._doubledata;
     } catch (...) {
         testSuccess = true;
     }
@@ -83,7 +83,7 @@ TEST(Evaluator, logical_ops) {
     pParser.parse(root);
 
     Evaluator pEvaluator;
-    double ret = pEvaluator.eval(root);
+    double ret = pEvaluator.eval(root)._doubledata;
     EXPECT_FLOAT_EQ(ret, 1);
 
     root->cleanSyntaxTree();
@@ -105,7 +105,7 @@ TEST(Evaluator, multiargs) {
     pParser.parse(root);
 
     Evaluator pEvaluator;
-    double ret = pEvaluator.eval(root);
+    double ret = pEvaluator.eval(root)._doubledata;
     EXPECT_FLOAT_EQ(ret, 6);
 
     root->cleanSyntaxTree();
@@ -129,7 +129,7 @@ TEST(Evaluator, multiargs_fault_handle) {
     bool success = false;
     try {
         Evaluator pEvaluator;
-        double ret = pEvaluator.eval(root);
+        double ret = pEvaluator.eval(root)._doubledata;
     } catch (...) {
         success = true;
     }
@@ -157,7 +157,7 @@ TEST(Evaluator, multiargs2) {
     pParser.parse(root);
 
     Evaluator pEvaluator;
-    double ret = pEvaluator.eval(root);
+    double ret = pEvaluator.eval(root)._doubledata;
     EXPECT_FLOAT_EQ(ret, 5);
 
     root->cleanSyntaxTree();
@@ -188,7 +188,7 @@ TEST(Evaluator, multiargs3) {
     pParser.parse(root);
 
     Evaluator pEvaluator;
-    double ret = pEvaluator.eval(root);
+    double ret = pEvaluator.eval(root)._doubledata;
     EXPECT_FLOAT_EQ(ret, 6);
 
     root->cleanSyntaxTree();
@@ -222,7 +222,7 @@ TEST(Evaluator, multiargs4) {
     pParser.parse(root);
 
     Evaluator pEvaluator;
-    double ret = pEvaluator.eval(root);
+    double ret = pEvaluator.eval(root)._doubledata;
     EXPECT_FLOAT_EQ(ret, 8);
 
     root->cleanSyntaxTree();

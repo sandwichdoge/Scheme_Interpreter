@@ -6,8 +6,8 @@
 std::size_t SyntaxTreeNode::allocated = 0;
 
 SyntaxTreeNode::SyntaxTreeNode() {
-    allocated++;
-    this->nodeid = allocated;
+    //allocated++;
+    //this->nodeid = allocated;
 }
 
 SyntaxTreeNode::~SyntaxTreeNode() {}
