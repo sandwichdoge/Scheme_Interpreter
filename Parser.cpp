@@ -59,7 +59,7 @@ enum KEYWORD_TYPE Parser::identifyKeyword(const std::string& token) {
     enum KEYWORD_TYPE keywordType;
 
     if (tok == "*" || tok == "+" || tok == "-" || tok == "/" || tok == "<" || tok == ">" || tok == "==" ||
-        tok == "&&" || tok == "||" || tok == ">=" || tok == "<=") {
+        token == "!=" || tok == "&&" || tok == "||" || tok == ">=" || tok == "<=") {
         keywordType = KEYWORD_OPERATOR;
     } else if (StringUtils::isValidNumberString(tok)) {
         keywordType = KEYWORD_CONSTANT;
