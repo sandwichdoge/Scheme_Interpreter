@@ -415,6 +415,7 @@ DataType DataType::operator||(const DataType& target) {
 }
 
 std::ostream& operator<<(std::ostream& os, const DataType& data) {
+    db("String cout: " << data._stringData);
     switch (data.dataType) {
         case DataType::DATA_TYPE_DOUBLE: {
             os << data._doubledata;

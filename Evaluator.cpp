@@ -43,6 +43,12 @@ DataType Evaluator::eval(SyntaxTreeNode *root) {
             }
             break;
         }
+        case (KEYWORD_STRING): {
+            ret = root->token;
+            root->evaluated = true;
+            root->value = root->token;
+            break;
+        }
         // For tokens with potentially unlimited children, evaluate everything first.
         default: {
             for (std::size_t i = 0; i < root->childNodes.size(); ++i) {

@@ -69,11 +69,11 @@ int Interpreter::parse() {
     return 0;
 }
 
-double Interpreter::eval() {
-    return pEvaluator->eval(astRoot)._doubledata;
+DataType Interpreter::eval() {
+    return pEvaluator->eval(astRoot);
 }
 
-int Interpreter::run(double& result) {
+int Interpreter::run(DataType& result) {
     // Check basic syntax.
     if (checkSyntax() < 0) return -1;
     // Split source into word tokens.

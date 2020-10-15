@@ -8,6 +8,7 @@
 #include "Lexer.h"
 #include "Parser.h"
 #include "SyntaxChecker.h"
+#include "DataType.h"
 
 class Interpreter {
    public:
@@ -22,9 +23,9 @@ class Interpreter {
     int lex();
     // Parse tokens
     int parse();
-    double eval();
+    DataType eval();
 
-    int run(double &result);
+    int run(DataType &result);
 
     std::vector<std::string> getTokens() { return _tokens; }
     std::string getCode() { return _code; }
@@ -32,7 +33,6 @@ class Interpreter {
    private:
     SyntaxTreeNode *astRoot = nullptr;
     bool isDelimChar(char c);
-    double mapOp(const std::string &op, std::vector<double>);
     std::string _code;
     std::vector<std::string> _tokens;
     Lexer *pLexer;

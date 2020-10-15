@@ -16,7 +16,7 @@ int main(int argc, char *argv[]) {
         delete pInterpreter;
         return -2;
     }
-    double final = 0;
+    DataType final;
     try {
         pInterpreter->run(final);
     } catch (...) {

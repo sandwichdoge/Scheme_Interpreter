@@ -1,1 +1,4 @@
-(("Hi there") (print "Okie dokie"))
+(if 1
+  "yes"
+  "no"
+)
